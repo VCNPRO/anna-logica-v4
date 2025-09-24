@@ -5,35 +5,71 @@ import { createTempFilePath, ensureTempDir, cleanupTempFile } from './temp-utils
 
 const execFileAsync = promisify(execFile);
 
+// Check if FFmpeg is available at given path
+async function checkFFmpegAvailability(path: string): Promise<boolean> {
+  try {
+    await execFileAsync(path, ['-version']);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // Detect FFmpeg path based on environment
-function getFFmpegPath(): string {
-  // Production (Vercel, Netlify, etc.) - Use ffmpeg-static
+async function getFFmpegPath(): Promise<string> {
+  const possiblePaths = [];
+
+  // Production (Vercel, Netlify, etc.)
   if (process.env.NODE_ENV === 'production') {
     try {
-      // Dynamic import for ffmpeg-static in production
+      // Try ffmpeg-static first
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const ffmpegStatic = require('ffmpeg-static');
-      console.log('🎥 Using ffmpeg-static for production:', ffmpegStatic);
-      return ffmpegStatic;
+      if (typeof ffmpegStatic === 'string' && ffmpegStatic) {
+        possiblePaths.push(ffmpegStatic);
+      }
     } catch {
-      console.log('🎥 Fallback to system FFmpeg: ffmpeg');
-      return 'ffmpeg';
+      // ffmpeg-static not available
+    }
+
+    // Try common system paths in serverless environments
+    possiblePaths.push(
+      'ffmpeg',
+      '/usr/bin/ffmpeg',
+      '/usr/local/bin/ffmpeg',
+      '/opt/homebrew/bin/ffmpeg'
+    );
+  } else if (process.platform === 'win32') {
+    // Development (Windows local)
+    possiblePaths.push(
+      "C:\\ffmpeg\\bin\\ffmpeg.exe",
+      'ffmpeg'
+    );
+  } else {
+    // Unix systems (macOS, Linux)
+    possiblePaths.push(
+      'ffmpeg',
+      '/usr/bin/ffmpeg',
+      '/usr/local/bin/ffmpeg',
+      '/opt/homebrew/bin/ffmpeg'
+    );
+  }
+
+  // Test each path and return the first working one
+  for (const path of possiblePaths) {
+    console.log(`🔍 Testing FFmpeg path: ${path}`);
+    if (await checkFFmpegAvailability(path)) {
+      console.log(`✅ Found working FFmpeg at: ${path}`);
+      return path;
     }
   }
 
-  // Development (Windows local)
-  if (process.platform === 'win32') {
-    const windowsPath = "C:\\ffmpeg\\bin\\ffmpeg.exe";
-    console.log('🎥 Using Windows FFmpeg:', windowsPath);
-    return windowsPath;
-  }
-
-  // Unix systems (macOS, Linux)
-  console.log('🎥 Using system FFmpeg: ffmpeg');
+  // If nothing works, return 'ffmpeg' as fallback
+  console.log('⚠️  No working FFmpeg found, using fallback: ffmpeg');
   return 'ffmpeg';
 }
 
-const ffmpegPath = getFFmpegPath();
+// FFmpeg path will be resolved at runtime
 
 export interface MediaSegment {
   segmentPath: string;
@@ -54,6 +90,7 @@ export interface SegmentationResult {
  */
 export async function getMediaDuration(filePath: string): Promise<number> {
   try {
+    const ffmpegPath = await getFFmpegPath();
     console.log(`🎥 Getting duration with FFmpeg: ${ffmpegPath}`);
     const { stdout, stderr } = await execFileAsync(ffmpegPath, [
       '-i', filePath,
@@ -134,6 +171,7 @@ export async function segmentMediaFile(
       console.log(`Creating segment ${i + 1}/${numSegments}: ${startTime}s - ${endTime}s`);
 
       // Extract segment using FFmpeg
+      const ffmpegPath = await getFFmpegPath();
       await execFileAsync(ffmpegPath, [
         '-i', filePath,
         '-ss', startTime.toString(),
@@ -193,6 +231,7 @@ export async function convertToCompressedMp3(
   bitrate: number = 64 // 64kbps for maximum compression while maintaining intelligibility
 ): Promise<void> {
   try {
+    const ffmpegPath = await getFFmpegPath();
     console.log(`🎵 Converting to MP3 with FFmpeg: ${ffmpegPath}`);
     console.log(`📁 Input: ${inputPath}`);
     console.log(`📁 Output: ${outputPath}`);
