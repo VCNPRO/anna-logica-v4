@@ -45,12 +45,16 @@ export async function POST(request: Request) {
       },
     };
 
+    console.log('Calling Gemini API for transcription...');
     const result = await model.generateContent([prompt, audioFilePart]);
     const response = await result.response;
     const transcription = response.text();
 
+    console.log('Transcription response length:', transcription.length);
+    console.log('Transcription preview:', transcription.substring(0, 100));
+
     // Clean up temp file
-    await fs.unlink(tempFilePath);
+    await cleanupTempFile(tempFilePath);
 
     return NextResponse.json({
       success: true,
@@ -64,9 +68,7 @@ export async function POST(request: Request) {
 
     // Clean up temp file if it exists
     if (tempFilePath) {
-      try {
-        await fs.unlink(tempFilePath);
-      } catch {}
+      await cleanupTempFile(tempFilePath);
     }
 
     const errorMessage = error instanceof Error ? error.message : 'Error transcribing file.';

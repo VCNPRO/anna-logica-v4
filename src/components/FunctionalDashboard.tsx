@@ -68,17 +68,44 @@ export default function FunctionalDashboard() {
   };
 
   const callAPI = async (endpoint: string, formData: FormData) => {
+    console.log(`Calling API: /api/${endpoint}`);
+
     const response = await fetch(`/api/${endpoint}`, {
       method: 'POST',
       body: formData,
     });
 
+    console.log(`API response status: ${response.status}`);
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || `Error calling ${endpoint}`);
+      let errorMessage = `Error calling ${endpoint}`;
+
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+      } catch {
+        // If JSON parsing fails, try to get text
+        try {
+          const errorText = await response.text();
+          console.log('Error response text:', errorText.substring(0, 200));
+          errorMessage = `Server error: ${errorText.substring(0, 100)}`;
+        } catch {
+          errorMessage = `HTTP ${response.status} error`;
+        }
+      }
+
+      throw new Error(errorMessage);
     }
 
-    return response.json();
+    try {
+      const jsonResponse = await response.json();
+      console.log('API response success:', Object.keys(jsonResponse));
+      return jsonResponse;
+    } catch (error) {
+      const responseText = await response.text();
+      console.log('Failed to parse JSON, response text:', responseText.substring(0, 200));
+      throw new Error(`Invalid JSON response: ${responseText.substring(0, 50)}...`);
+    }
   };
 
   const handleActionClick = async (action: string) => {
