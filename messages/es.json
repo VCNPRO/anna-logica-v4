@@ -1,0 +1,71 @@
+{
+  "DashboardPage": {
+    "title": "Subir Archivos"
+  },
+  "Header": {
+    "dashboardTitle": "Dashboard",
+    "signOutButton": "Cerrar Sesión"
+  },
+  "Sidebar": {
+    "appName": "Anna Lógica",
+    "homeLink": "Inicio",
+    "filesLink": "Archivos",
+    "settingsLink": "Configuración"
+  },
+  "FileUploader": {
+    "sizeExceededError": "El archivo excede el tamaño máximo de 200 MB.",
+    "uploadError": "Error al subir el archivo.",
+    "connectionError": "No se pudo conectar con el servidor.",
+    "processingFile": "Procesando archivo...",
+    "processingTimeWarning": "Este proceso puede tardar varios minutos.",
+    "dragAndDropPrompt": "Arrastra y suelta un archivo aquí",
+    "or": "o",
+    "selectFileButton": "Selecciona un archivo",
+    "maxFileSize": "Tamaño máximo por archivo: 200 MB",
+    "uploadSuccess": "¡Archivo subido con éxito!",
+    "uploadAnotherFile": "Subir otro archivo",
+    "uploadFailed": "Error en la subida",
+    "tryAgain": "Intentar de nuevo"
+  },
+  "Login": {
+    "appName": "Anna Lógica",
+    "emailLabel": "Email",
+    "passwordLabel": "Contraseña",
+    "loadingButton": "Cargando...",
+    "loginButton": "Iniciar Sesión",
+    "registerButton": "Registrarse",
+    "invalidEmailError": "El formato del email no es válido.",
+    "invalidCredentialsError": "Email o contraseña incorrectos.",
+    "emailAlreadyInUseError": "Este email ya está registrado.",
+    "weakPasswordError": "La contraseña debe tener al menos 6 caracteres.",
+    "genericError": "Ha ocurrido un error. Inténtalo de nuevo."
+  },
+  "ResultsDisplay": {
+    "title": "Resultados del Análisis",
+    "analyzeAnotherFile": "Analizar otro archivo"
+  },
+  "ExportControls": {
+    "exportAs": "Exportar como:",
+    "generateError": "Error al generar el archivo."
+  },
+  "TranscriptionView": {
+    "title": "Transcripción"
+  },
+  "SummaryView": {
+    "title": "Resumen"
+  },
+  "TagsView": {
+    "speakersTitle": "Ponentes",
+    "tagsTitle": "Etiquetas"
+  },
+  "MetadataView": {
+    "title": "Metadatos Técnicos",
+    "fileNameLabel": "Nombre Archivo:",
+    "convertedToMp3Label": "Convertido a MP3:",
+    "yes": "Sí",
+    "no": "No",
+    "mediaConchReportLabel": "Informe MediaConch:",
+    "bwfReportLabel": "Informe BWF:",
+    "mediaInfoReportLabel": "Informe MediaInfo:"
+  }
+}

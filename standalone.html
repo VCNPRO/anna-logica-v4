@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Anna Lógica</title>
+    <meta name="description" content="Plataforma de análisis y transcripción de medios."/>
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjRjU5NzE2Ii8+Cjx0ZXh0IHg9IjE2IiB5PSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiPkE8L3RleHQ+Cjwvc3ZnPgo=" type="image/svg+xml"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'orbitron': ['Orbitron', 'monospace'],
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-inter">
+    <div class="min-h-screen bg-gray-50">
+        <!-- Demo Mode Banner -->
+        <div class="fixed top-0 left-0 right-0 bg-orange-500 text-white px-4 py-2 text-center text-sm font-medium z-50">
+            🚀 Modo Demo - Sin autenticación requerida |
+            <button onclick="window.location.reload()" class="ml-2 underline hover:no-underline">
+                Salir del modo demo
+            </button>
+        </div>
+
+        <!-- Settings Button - Top Right -->
+        <div class="fixed top-16 right-6 z-40">
+            <div class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border border-gray-200">
+                <span class="text-sm text-gray-600">Ajustes</span>
+                <div class="w-5 h-5 text-gray-600">
+                    <span>⚙️</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex pt-10" style="height: 100vh">
+            <!-- Sidebar -->
+            <div class="bg-white border-r border-gray-200 p-6 flex flex-col" style="width: 33.333%; min-width: 33.333%; max-width: 33.333%; height: 100%">
+                <!-- Header -->
+                <div class="flex items-center mb-6">
+                    <h1 class="text-3xl text-orange-500 tracking-tight font-orbitron font-black">anna logica</h1>
+                </div>
+
+                <!-- File Upload Section -->
+                <div class="mb-6">
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-orange-400 transition-colors" onclick="document.getElementById('file-input').click()">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="text-orange-500 text-sm">📁</span>
+                            <h2 class="text-sm font-medium text-gray-900">Carga de Archivos</h2>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-3">Sube hasta 50 archivos de audio, video o texto.</p>
+                        <div class="text-gray-400 mb-3">
+                            <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 0115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-1">Arrastra y suelta hasta 50 archivos aquí</p>
+                        <p class="text-xs text-gray-500 mb-2">o</p>
+                        <button class="text-orange-500 text-xs font-medium hover:text-orange-600">
+                            Selecciona archivos de tu equipo
+                        </button>
+                        <input id="file-input" type="file" multiple class="hidden" accept="audio/*,video/*,.txt,.docx,.pdf"/>
+                    </div>
+                </div>
+
+                <!-- AI Actions Section -->
+                <div class="mb-6">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-orange-500 text-sm">🤖</span>
+                        <h2 class="text-sm font-medium text-gray-900">Acciones IA</h2>
+                    </div>
+                    <p class="text-xs text-gray-600 mb-3">Selecciona archivos y aplica una acción de IA.</p>
+
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Idioma del Contenido</label>
+                            <select class="w-full p-2 border border-gray-300 rounded-md text-xs focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                                <option value="auto">Detección automática</option>
+                                <option value="es" selected>Español</option>
+                                <option value="en">English</option>
+                                <option value="fr">Français</option>
+                                <option value="ca">Català</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <button class="p-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs font-medium transition-colors">
+                                📝 Transcribir
+                            </button>
+                            <button class="p-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs font-medium transition-colors">
+                                👥 Identificar Oradores
+                            </button>
+                        </div>
+
+                        <button class="w-full p-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs font-medium transition-colors">
+                            📋 Resumir y Etiquetar
+                        </button>
+
+                        <div class="flex items-center gap-3 text-xs mb-2">
+                            <label class="flex items-center gap-1">
+                                <input type="radio" name="summary" class="accent-orange-500 scale-75"/>
+                                <span class="text-gray-700">Corto</span>
+                            </label>
+                            <label class="flex items-center gap-1">
+                                <input type="radio" name="summary" class="accent-orange-500 scale-75" checked/>
+                                <span class="text-gray-700">Detallado</span>
+                            </label>
+                        </div>
+
+                        <input type="text" placeholder="Pistas de oradores (ej: Ana, Juan)" class="w-full p-2 border border-gray-300 rounded-md text-xs focus:ring-2 focus:ring-orange-500 focus:border-orange-500 mb-2"/>
+
+                        <button class="w-full p-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs font-medium transition-colors mb-2">
+                            🌐 Traducir
+                        </button>
+
+                        <select class="w-full p-2 border border-gray-300 rounded-md text-xs focus:ring-2 focus:ring-orange-500 focus:border-orange-500 mb-3">
+                            <option value="en">Inglés</option>
+                            <option value="es">Español</option>
+                            <option value="fr">Français</option>
+                            <option value="ca">Català</option>
+                        </select>
+
+                        <button class="w-full p-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs font-medium transition-colors">
+                            📊 Analizar Fichero
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="flex-1 p-6 overflow-y-auto" style="height: 100%">
+                <div class="mb-6" style="height: 28px"></div>
+
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden" style="height: calc(100vh - 200px); min-height: 500px">
+                    <div class="px-4 py-3 border-b border-gray-200">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-orange-500 text-sm">📁</span>
+                            <h2 class="text-sm font-medium text-gray-900">Archivos</h2>
+                        </div>
+                        <p class="text-xs text-gray-600">Archivos cargados y resultados del procesamiento</p>
+                    </div>
+
+                    <div class="px-4 py-3 border-b border-gray-200">
+                        <div class="flex items-center gap-4">
+                            <input type="checkbox" class="rounded border-gray-300 scale-75"/>
+                            <span class="text-xs font-medium text-gray-900 flex-1">Nombre Archivo</span>
+                            <span class="text-xs font-medium text-gray-600 text-center" style="min-width: 80px">Estado</span>
+                            <span class="text-xs font-medium text-gray-600">Acciones</span>
+                        </div>
+                    </div>
+
+                    <div class="px-4 py-8 text-center">
+                        <p class="text-xs text-gray-500">Aún no has subido ningún archivo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

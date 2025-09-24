@@ -1,0 +1,71 @@
+{
+  "DashboardPage": {
+    "title": "Upload Files"
+  },
+  "Header": {
+    "dashboardTitle": "Dashboard",
+    "signOutButton": "Sign Out"
+  },
+  "Sidebar": {
+    "appName": "Anna Logica",
+    "homeLink": "Home",
+    "filesLink": "Files",
+    "settingsLink": "Settings"
+  },
+  "FileUploader": {
+    "sizeExceededError": "File exceeds maximum size of 200 MB.",
+    "uploadError": "Error uploading file.",
+    "connectionError": "Could not connect to server.",
+    "processingFile": "Processing file...",
+    "processingTimeWarning": "This process may take several minutes.",
+    "dragAndDropPrompt": "Drag and drop a file here",
+    "or": "or",
+    "selectFileButton": "Select a file",
+    "maxFileSize": "Maximum file size: 200 MB",
+    "uploadSuccess": "File uploaded successfully!",
+    "uploadAnotherFile": "Upload another file",
+    "uploadFailed": "Upload failed",
+    "tryAgain": "Try again"
+  },
+  "Login": {
+    "appName": "Anna Logica",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "loadingButton": "Loading...",
+    "loginButton": "Login",
+    "registerButton": "Register",
+    "invalidEmailError": "Invalid email format.",
+    "invalidCredentialsError": "Incorrect email or password.",
+    "emailAlreadyInUseError": "This email is already registered.",
+    "weakPasswordError": "Password must be at least 6 characters.",
+    "genericError": "An error occurred. Please try again."
+  },
+  "ResultsDisplay": {
+    "title": "Analysis Results",
+    "analyzeAnotherFile": "Analyze another file"
+  },
+  "ExportControls": {
+    "exportAs": "Export as:",
+    "generateError": "Error generating file."
+  },
+  "TranscriptionView": {
+    "title": "Transcription"
+  },
+  "SummaryView": {
+    "title": "Summary"
+  },
+  "TagsView": {
+    "speakersTitle": "Speakers",
+    "tagsTitle": "Tags"
+  },
+  "MetadataView": {
+    "title": "Technical Metadata",
+    "fileNameLabel": "File Name:",
+    "convertedToMp3Label": "Converted to MP3:",
+    "yes": "Yes",
+    "no": "No",
+    "mediaConchReportLabel": "MediaConch Report:",
+    "bwfReportLabel": "BWF Report:",
+    "mediaInfoReportLabel": "MediaInfo Report:"
+  }
+}
