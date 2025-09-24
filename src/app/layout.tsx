@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html>
       <body className={`${inter.className} ${roboto.variable} ${orbitron.variable}`}>
         {children}
       </body>
