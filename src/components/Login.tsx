@@ -16,6 +16,11 @@ export function Login() {
     const [isLoading, setIsLoading] = useState(false);
     const t = useTranslations('Login');
 
+    const handleDemoAccess = () => {
+        // Simply redirect to dashboard in demo mode
+        window.location.href = '/es';
+    };
+
     const handleAuthAction = async (action: 'login' | 'register') => {
         setIsLoading(true);
         setError(null);
@@ -122,10 +127,22 @@ export function Login() {
                     </div>
 
                     <div className="mt-6 text-center">
-                        <p className="text-sm text-gray-500">
-                            🚀 <strong>Usuario de prueba:</strong><br/>
-                            Email: demo@annalogica.com<br/>
-                            Password: demo123456
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-300"></div>
+                            </div>
+                            <div className="relative flex justify-center text-sm">
+                                <span className="px-2 bg-white text-gray-500">o</span>
+                            </div>
+                        </div>
+                        <button
+                            onClick={handleDemoAccess}
+                            className="mt-4 w-full py-2 px-4 bg-green-500 hover:bg-green-600 text-white font-medium rounded-md transition-colors"
+                        >
+                            🚀 Acceso Demo Directo
+                        </button>
+                        <p className="text-xs text-gray-400 mt-2">
+                            Sin registro requerido
                         </p>
                     </div>
                 </div>
