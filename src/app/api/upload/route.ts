@@ -74,25 +74,37 @@ export async function POST(request: Request) {
   let bwfInfo: string | null = null;
   let mediaConchReport: string | null = null;
   let aiAnalysis: AiAnalysisResult | null = null;
+  let shouldCleanupOriginal = false;
 
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
+    const serverFilePath = formData.get('serverFilePath') as string | null;
 
-    if (!file) {
+    // Handle large file upload (server file path) or regular upload
+    if (serverFilePath) {
+      // Large file already uploaded to server
+      originalFilePath = serverFilePath;
+      shouldCleanupOriginal = true;
+      console.log(`Using pre-uploaded file: ${originalFilePath}`);
+    } else if (file) {
+      // Regular file upload
+      await ensureTempDir('uploads');
+      originalFilePath = createTempFilePath(file.name, 'uploads');
+      const buffer = Buffer.from(await file.arrayBuffer());
+      await fs.writeFile(originalFilePath, buffer);
+      shouldCleanupOriginal = true;
+      console.log(`File saved to: ${originalFilePath}`);
+    } else {
       return NextResponse.json({ error: 'No file provided.' }, { status: 400 });
     }
-
-    await ensureTempDir('uploads');
-    originalFilePath = createTempFilePath(file.name, 'uploads');
-    const buffer = Buffer.from(await file.arrayBuffer());
-    await fs.writeFile(originalFilePath, buffer);
-    console.log(`File saved to: ${originalFilePath}`);
 
     processedFilePath = originalFilePath;
     let converted = false;
 
-    const fileType = file.type;
+    // Get file type and name from file or form data
+    const fileType = file?.type || formData.get('mimeType') as string || 'application/octet-stream';
+    const fileName = file?.name || formData.get('originalFileName') as string || 'uploaded_file';
     const isWav = fileType === 'audio/wav' || fileType === 'audio/x-wav';
 
     if (isWav) {
@@ -109,20 +121,21 @@ export async function POST(request: Request) {
         const mp3FilePath = createTempFilePath(mp3FileName, 'uploads');
 
         await convertToMp3(originalFilePath, mp3FilePath);
-        
+
         processedFilePath = mp3FilePath;
         converted = true;
 
-        if (originalFilePath !== processedFilePath) {
+        // Clean up original file after conversion
+        if (originalFilePath !== processedFilePath && shouldCleanupOriginal) {
              await fs.unlink(originalFilePath);
-             console.log(`Original file ${originalFilePath} deleted.`);
+             console.log(`Original file ${originalFilePath} deleted after conversion.`);
         }
     }
 
     const mediaInfo = await getMediaInfo(processedFilePath);
     mediaConchReport = await getMediaConchReport(processedFilePath);
 
-    const isProcessable = file.type.startsWith('audio/') || file.type.startsWith('video/');
+    const isProcessable = fileType.startsWith('audio/') || fileType.startsWith('video/');
     if(isProcessable) {
         aiAnalysis = await getAiAnalysis(processedFilePath);
     }
@@ -132,8 +145,8 @@ export async function POST(request: Request) {
 
 
     return NextResponse.json({
-      success: true, 
-      fileName: path.basename(processedFilePath),
+      success: true,
+      fileName: converted ? path.basename(processedFilePath) : fileName,
       converted: converted,
       mediaInfo: mediaInfo,
       bwfInfo: bwfInfo,

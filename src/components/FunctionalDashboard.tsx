@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Login } from '@/components/Login';
 import { TranscriptionView, SummaryView, TagsView } from '@/components/results';
+import { LargeFileUploader, UploadProgress } from '@/lib/large-file-uploader';
 
 // Note: Type interfaces removed as they were unused in current implementation
 
@@ -20,6 +21,7 @@ export default function FunctionalDashboard() {
   const [speakers, setSpeakers] = useState<string>('');
   const [summaryType, setSummaryType] = useState<'short' | 'detailed'>('detailed');
   const [targetLanguage, setTargetLanguage] = useState('en');
+  const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null);
 
   // Demo mode - ALWAYS enabled for now
   const isDemoMode = true;
@@ -115,22 +117,47 @@ export default function FunctionalDashboard() {
     }
 
     const file = selectedFiles[0]; // Process first file for now
+    const maxSizeBytes = 4 * 1024 * 1024; // 4MB threshold for chunked upload
 
-    // Check file size limit (4MB for Vercel)
-    const maxSizeBytes = 4 * 1024 * 1024; // 4MB
-    if (file.size > maxSizeBytes) {
-      setError(`Archivo demasiado grande. Máximo permitido: 4MB. Tu archivo: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
-      return;
-    }
+    // console.log(`Processing file: ${file.name}, size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
 
     setCurrentAction(action);
     setIsLoading(true);
     setError(null);
     setResult(null);
+    setUploadProgress(null);
 
     try {
+      let uploadedFilePath: string | null = null;
+
+      // Use chunked upload for large files
+      if (file.size > maxSizeBytes) {
+        // console.log(`Large file detected (${(file.size / 1024 / 1024).toFixed(2)}MB), using chunked upload`);
+
+        const uploader = new LargeFileUploader((progress: UploadProgress) => {
+          setUploadProgress(progress);
+        });
+
+        const uploadResult = await uploader.uploadFile(file);
+        uploadedFilePath = uploadResult.filePath;
+      } else {
+        // Use regular upload for small files
+        uploadedFilePath = null; // Will use FormData directly
+      }
+
       const formData = new FormData();
-      formData.append('file', file);
+
+      if (uploadedFilePath) {
+        // For large files, send the server file path
+        formData.append('serverFilePath', uploadedFilePath);
+        formData.append('originalFileName', file.name);
+        formData.append('fileSize', file.size.toString());
+        formData.append('mimeType', file.type);
+      } else {
+        // For small files, send the file directly
+        formData.append('file', file);
+      }
+
       formData.append('language', currentLanguage);
 
       let apiResult;
@@ -172,8 +199,11 @@ export default function FunctionalDashboard() {
         timestamp: new Date().toISOString()
       });
 
+      setUploadProgress(null);
+
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Error al procesar el archivo');
+      setUploadProgress(null);
     } finally {
       setIsLoading(false);
       setCurrentAction('');
@@ -301,7 +331,7 @@ export default function FunctionalDashboard() {
                 <span className="text-orange-500 text-sm">📁</span>
                 <h2 className="text-sm font-medium text-gray-900">Carga de Archivos</h2>
               </div>
-              <p className="text-xs text-gray-600 mb-3">Sube archivos de audio, video o texto (máx. 4MB cada uno).</p>
+              <p className="text-xs text-gray-600 mb-3">Sube archivos de audio, video o texto (archivos grandes soportados con subida fragmentada).</p>
 
               <div className="text-gray-400 mb-3">
                 <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -455,9 +485,29 @@ export default function FunctionalDashboard() {
             )}
 
             {isLoading && (
-              <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 mx-4 mb-4 rounded-md flex items-center gap-3 text-xs">
-                <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                <span>Procesando {currentAction}...</span>
+              <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 mx-4 mb-4 rounded-md text-xs">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                  <span>Procesando {currentAction}...</span>
+                </div>
+                {uploadProgress && (
+                  <div className="mt-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs">{uploadProgress.message}</span>
+                      <span className="text-xs">{Math.round(uploadProgress.progress)}%</span>
+                    </div>
+                    <div className="w-full bg-blue-200 rounded-full h-2">
+                      <div
+                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${uploadProgress.progress}%` }}
+                      ></div>
+                    </div>
+                    <div className="flex items-center justify-between mt-1 text-xs">
+                      <span>{(uploadProgress.bytesUploaded / 1024 / 1024).toFixed(1)}MB / {(uploadProgress.totalBytes / 1024 / 1024).toFixed(1)}MB</span>
+                      <span className="capitalize">{uploadProgress.stage}</span>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -500,19 +550,19 @@ export default function FunctionalDashboard() {
                   <div className="divide-y divide-gray-200">
                     {selectedFiles.map((file, index) => {
                       const sizeInMB = (file.size / 1024 / 1024).toFixed(2);
-                      const isTooBig = file.size > 4 * 1024 * 1024;
+                      const isLarge = file.size > 4 * 1024 * 1024;
 
                       return (
                         <div key={index} className="px-4 py-3 flex items-center gap-4">
                           <input type="checkbox" className="rounded border-gray-300 scale-75" />
                           <div className="flex-1">
                             <span className="text-xs text-gray-900 block">{file.name}</span>
-                            <span className={`text-xs ${isTooBig ? 'text-red-500' : 'text-gray-500'}`}>
-                              {sizeInMB}MB {isTooBig && '(Demasiado grande)'}
+                            <span className={`text-xs ${isLarge ? 'text-blue-600' : 'text-gray-500'}`}>
+                              {sizeInMB}MB {isLarge && '(Subida fragmentada)'}
                             </span>
                           </div>
                           <span className="text-xs text-gray-500 text-center" style={{minWidth: '80px'}}>
-                            {isTooBig ? 'Error' : 'Cargado'}
+                            Cargado
                           </span>
                           <button
                             onClick={() => removeFile(index)}

@@ -46,6 +46,17 @@ export async function ensureTempDir(subDir?: string): Promise<string> {
 }
 
 /**
+ * Create a temporary file path without timestamp (for specific naming needs like chunks)
+ */
+export function createTempFilePathExact(fileName: string, subDir?: string): string {
+  // Sanitize filename to prevent path traversal
+  const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
+
+  const tempDir = getTempDir(subDir);
+  return path.join(tempDir, sanitizedFileName);
+}
+
+/**
  * Clean up temporary file
  */
 export async function cleanupTempFile(filePath: string): Promise<void> {

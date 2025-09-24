@@ -5,21 +5,29 @@ import { createTempFilePath, ensureTempDir, cleanupTempFile } from '@/lib/temp-u
 
 export async function POST(request: Request) {
   let tempFilePath: string | null = null;
+  let shouldCleanup = false;
 
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
+    const serverFilePath = formData.get('serverFilePath') as string | null;
     const language = formData.get('language') as string || 'auto';
 
-    if (!file) {
+    // Handle large file upload (server file path) or regular upload
+    if (serverFilePath) {
+      // Large file already uploaded to server
+      tempFilePath = serverFilePath;
+      shouldCleanup = true; // We should clean up the server file after processing
+    } else if (file) {
+      // Regular file upload
+      await ensureTempDir('transcribe');
+      tempFilePath = createTempFilePath(file.name, 'transcribe');
+      const buffer = Buffer.from(await file.arrayBuffer());
+      await fs.writeFile(tempFilePath, buffer);
+      shouldCleanup = true;
+    } else {
       return NextResponse.json({ error: 'No file provided.' }, { status: 400 });
     }
-
-    // Save file temporarily
-    await ensureTempDir('transcribe');
-    tempFilePath = createTempFilePath(file.name, 'transcribe');
-    const buffer = Buffer.from(await file.arrayBuffer());
-    await fs.writeFile(tempFilePath, buffer);
 
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -38,10 +46,13 @@ export async function POST(request: Request) {
       Si hay múltiples personas hablando, indica cada cambio de speaker con "Speaker 1:", "Speaker 2:", etc.
     `;
 
+    // Get MIME type from file or form data
+    const mimeType = file?.type || formData.get('mimeType') as string || 'audio/mpeg';
+
     const audioFilePart = {
       inlineData: {
         data: Buffer.from(await fs.readFile(tempFilePath)).toString("base64"),
-        mimeType: file.type,
+        mimeType: mimeType,
       },
     };
 
@@ -53,21 +64,25 @@ export async function POST(request: Request) {
     console.log('Transcription response length:', transcription.length);
     console.log('Transcription preview:', transcription.substring(0, 100));
 
-    // Clean up temp file
-    await cleanupTempFile(tempFilePath);
+    // Clean up temp file if needed
+    if (shouldCleanup && tempFilePath) {
+      await cleanupTempFile(tempFilePath);
+    }
+
+    const originalFileName = file?.name || formData.get('originalFileName') as string || 'uploaded_file';
 
     return NextResponse.json({
       success: true,
       transcription: transcription.trim(),
       language: language,
-      fileName: file.name
+      fileName: originalFileName
     });
 
   } catch (error) {
     console.error('Transcription error:', error);
 
-    // Clean up temp file if it exists
-    if (tempFilePath) {
+    // Clean up temp file if it exists and we should clean it
+    if (shouldCleanup && tempFilePath) {
       await cleanupTempFile(tempFilePath);
     }
 

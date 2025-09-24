@@ -11,21 +11,29 @@ const mediaConchPath = "C:\\MediaConch_CLI_25.04_Windows_x64\\mediaconch.exe";
 
 export async function POST(request: Request) {
   let tempFilePath: string | null = null;
+  let shouldCleanup = false;
 
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
+    const serverFilePath = formData.get('serverFilePath') as string | null;
     const analysisType = formData.get('analysisType') as string || 'complete';
 
-    if (!file) {
+    // Handle large file upload (server file path) or regular upload
+    if (serverFilePath) {
+      // Large file already uploaded to server
+      tempFilePath = serverFilePath;
+      shouldCleanup = true;
+    } else if (file) {
+      // Regular file upload
+      await ensureTempDir('analyze');
+      tempFilePath = createTempFilePath(file.name, 'analyze');
+      const buffer = Buffer.from(await file.arrayBuffer());
+      await fs.writeFile(tempFilePath, buffer);
+      shouldCleanup = true;
+    } else {
       return NextResponse.json({ error: 'No file provided.' }, { status: 400 });
     }
-
-    // Save file temporarily
-    await ensureTempDir('analyze');
-    tempFilePath = createTempFilePath(file.name, 'analyze');
-    const buffer = Buffer.from(await file.arrayBuffer());
-    await fs.writeFile(tempFilePath, buffer);
 
     // Technical analysis with external tools
     let mediaInfo = null;
@@ -88,10 +96,13 @@ export async function POST(request: Request) {
       }
     `;
 
+    // Get MIME type from file or form data
+    const mimeType = file?.type || formData.get('mimeType') as string || 'audio/mpeg';
+
     const filePart = {
       inlineData: {
         data: Buffer.from(await fs.readFile(tempFilePath)).toString("base64"),
-        mimeType: file.type,
+        mimeType: mimeType,
       },
     };
 
@@ -99,18 +110,73 @@ export async function POST(request: Request) {
     const response = await result.response;
     const text = response.text();
 
-    // Extract JSON from response
-    const jsonString = text.replace(/^```json\n/, '').replace(/\n```$/, '');
-    const aiAnalysis = JSON.parse(jsonString);
+    // console.log('Raw AI response:', text.substring(0, 500));
 
-    // Clean up temp file
-    await cleanupTempFile(tempFilePath);
+    // Extract JSON from response with better error handling
+    let jsonString = text.replace(/^```json\n?/, '').replace(/\n?```$/, '').trim();
+
+    // Try to find JSON in the response if it's not clean
+    if (!jsonString.startsWith('{')) {
+      const jsonMatch = jsonString.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        jsonString = jsonMatch[0];
+      }
+    }
+
+    let aiAnalysis;
+    try {
+      aiAnalysis = JSON.parse(jsonString);
+    } catch (parseError) {
+      console.error('Failed to parse AI response as JSON:', parseError);
+      console.error('JSON string was:', jsonString);
+
+      // Fallback response
+      aiAnalysis = {
+        contentAnalysis: {
+          type: "unknown",
+          duration: "Desconocida",
+          quality: "unknown",
+          audioQuality: "No se pudo analizar",
+          backgroundNoise: "No determinado",
+          speechClarity: "No determinada"
+        },
+        technicalAnalysis: {
+          format: "unknown",
+          bitrate: "unknown",
+          sampleRate: "unknown",
+          channels: "unknown",
+          compression: "unknown"
+        },
+        contentSummary: {
+          mainContent: "Error en el procesamiento del análisis",
+          topics: ["error"],
+          speakers: "unknown",
+          language: "unknown",
+          mood: "unknown"
+        },
+        recommendations: ["Reintentar el análisis"],
+        suitability: {
+          transcription: "no determinada",
+          archival: "no determinada",
+          broadcast: "no determinada"
+        }
+      };
+    }
+
+    // Clean up temp file if needed
+    if (shouldCleanup && tempFilePath) {
+      await cleanupTempFile(tempFilePath);
+    }
+
+    const originalFileName = file?.name || formData.get('originalFileName') as string || 'uploaded_file';
+    const fileSize = file?.size || parseInt(formData.get('fileSize') as string || '0');
+    const fileType = file?.type || formData.get('mimeType') as string || 'unknown';
 
     return NextResponse.json({
       success: true,
-      fileName: file.name,
-      fileSize: file.size,
-      fileType: file.type,
+      fileName: originalFileName,
+      fileSize: fileSize,
+      fileType: fileType,
       aiAnalysis: aiAnalysis,
       technicalData: {
         mediaInfo: mediaInfo,
@@ -123,8 +189,8 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('File analysis error:', error);
 
-    // Clean up temp file if it exists
-    if (tempFilePath) {
+    // Clean up temp file if it exists and we should clean it
+    if (shouldCleanup && tempFilePath) {
       await cleanupTempFile(tempFilePath);
     }
 

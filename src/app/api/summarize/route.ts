@@ -5,22 +5,30 @@ import { createTempFilePath, ensureTempDir, cleanupTempFile } from '@/lib/temp-u
 
 export async function POST(request: Request) {
   let tempFilePath: string | null = null;
+  let shouldCleanup = false;
 
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
+    const serverFilePath = formData.get('serverFilePath') as string | null;
     const summaryType = formData.get('summaryType') as string || 'detailed'; // 'short' or 'detailed'
     // const language = formData.get('language') as string || 'auto'; // TODO: Use for language-specific processing
 
-    if (!file) {
+    // Handle large file upload (server file path) or regular upload
+    if (serverFilePath) {
+      // Large file already uploaded to server
+      tempFilePath = serverFilePath;
+      shouldCleanup = true;
+    } else if (file) {
+      // Regular file upload
+      await ensureTempDir('summarize');
+      tempFilePath = createTempFilePath(file.name, 'summarize');
+      const buffer = Buffer.from(await file.arrayBuffer());
+      await fs.writeFile(tempFilePath, buffer);
+      shouldCleanup = true;
+    } else {
       return NextResponse.json({ error: 'No file provided.' }, { status: 400 });
     }
-
-    // Save file temporarily
-    await ensureTempDir('summarize');
-    tempFilePath = createTempFilePath(file.name, 'summarize');
-    const buffer = Buffer.from(await file.arrayBuffer());
-    await fs.writeFile(tempFilePath, buffer);
 
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -49,10 +57,13 @@ export async function POST(request: Request) {
       Los temas principales deben ser conceptos o áreas temáticas abordadas.
     `;
 
+    // Get MIME type from file or form data
+    const mimeType = file?.type || formData.get('mimeType') as string || 'audio/mpeg';
+
     const audioFilePart = {
       inlineData: {
         data: Buffer.from(await fs.readFile(tempFilePath)).toString("base64"),
-        mimeType: file.type,
+        mimeType: mimeType,
       },
     };
 
@@ -60,28 +71,58 @@ export async function POST(request: Request) {
     const response = await result.response;
     const text = response.text();
 
-    // Extract JSON from response
-    const jsonString = text.replace(/^```json\n/, '').replace(/\n```$/, '');
-    const analysis = JSON.parse(jsonString);
+    // console.log('Raw AI response:', text.substring(0, 500));
 
-    // Clean up temp file
-    await fs.unlink(tempFilePath);
+    // Extract JSON from response with better error handling
+    let jsonString = text.replace(/^```json\n?/, '').replace(/\n?```$/, '').trim();
+
+    // Try to find JSON in the response if it's not clean
+    if (!jsonString.startsWith('{')) {
+      const jsonMatch = jsonString.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        jsonString = jsonMatch[0];
+      }
+    }
+
+    let analysis;
+    try {
+      analysis = JSON.parse(jsonString);
+    } catch (parseError) {
+      console.error('Failed to parse AI response as JSON:', parseError);
+      console.error('JSON string was:', jsonString);
+
+      // Fallback response
+      analysis = {
+        summary: "Error en el procesamiento del resumen",
+        tags: ["error", "procesamiento"],
+        mainTopics: ["Error de análisis"],
+        duration: "Desconocida",
+        language: "Desconocido",
+        sentiment: "neutral",
+        confidence: 0.0
+      };
+    }
+
+    // Clean up temp file if needed
+    if (shouldCleanup && tempFilePath) {
+      await cleanupTempFile(tempFilePath);
+    }
+
+    const originalFileName = file?.name || formData.get('originalFileName') as string || 'uploaded_file';
 
     return NextResponse.json({
       success: true,
       ...analysis,
       summaryType: summaryType,
-      fileName: file.name
+      fileName: originalFileName
     });
 
   } catch (error) {
     console.error('Summarization error:', error);
 
-    // Clean up temp file if it exists
-    if (tempFilePath) {
-      try {
-        await fs.unlink(tempFilePath);
-      } catch {}
+    // Clean up temp file if it exists and we should clean it
+    if (shouldCleanup && tempFilePath) {
+      await cleanupTempFile(tempFilePath);
     }
 
     const errorMessage = error instanceof Error ? error.message : 'Error summarizing file.';
