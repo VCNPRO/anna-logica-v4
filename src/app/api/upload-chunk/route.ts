@@ -14,11 +14,14 @@ export async function OPTIONS(request: Request) {
 }
 
 export async function POST(request: Request) {
+  let uploadId: string | null = null;
+  let chunkIndex: string | null = null;
+
   try {
     const formData = await request.formData();
     const chunk = formData.get('chunk') as File;
-    const chunkIndex = formData.get('chunkIndex') as string;
-    const uploadId = formData.get('uploadId') as string;
+    chunkIndex = formData.get('chunkIndex') as string;
+    uploadId = formData.get('uploadId') as string;
 
     console.log('Received chunk upload request:', {
       hasChunk: !!chunk,
