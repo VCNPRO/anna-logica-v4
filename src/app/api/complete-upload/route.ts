@@ -74,19 +74,19 @@ export async function POST(request: Request) {
     // console.log(`Creating final file at: ${finalFilePath}`);
 
     // Combine chunks
-    const writeStream = await fs.open(finalFilePath, 'w');
+    const writeHandle = await fs.open(finalFilePath, 'w');
 
     try {
       for (const chunkFile of sortedChunks) {
         const chunkPath = path.join(chunksDir, chunkFile);
         const chunkData = await fs.readFile(chunkPath);
-        await writeStream.writeFile(chunkData);
+        await writeHandle.write(chunkData);
 
         // Clean up chunk file
         await fs.unlink(chunkPath);
       }
     } finally {
-      await writeStream.close();
+      await writeHandle.close();
     }
 
     // Clean up chunks directory

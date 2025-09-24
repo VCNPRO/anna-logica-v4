@@ -69,6 +69,52 @@ export default function FunctionalDashboard() {
     setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
+  // Función para descargar transcripción en diferentes formatos
+  const downloadTranscription = async (format: 'pdf' | 'txt' | 'srt') => {
+    if (!displayResult?.data?.transcription || !displayResult?.fileName) {
+      console.error('No transcription data available');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/export-transcription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          transcription: displayResult.data.transcription,
+          fileName: displayResult.fileName,
+          format: format,
+          language: 'es'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      // Crear un blob y descargar el archivo
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+
+      // Extraer nombre base del archivo
+      const baseName = displayResult.fileName.replace(/\.[^/.]+$/, '');
+      a.download = `${baseName}.${format}`;
+
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+      console.error(`Error downloading ${format.toUpperCase()}:`, error);
+      // TODO: Mostrar mensaje de error al usuario
+    }
+  };
+
   const callAPI = async (endpoint: string, formData: FormData) => {
     console.log(`Calling API: /api/${endpoint}`);
 
@@ -514,14 +560,42 @@ export default function FunctionalDashboard() {
             {displayResult ? (
               <div className="px-4 py-6">
                 <div className="space-y-6">
-                  <div className="flex justify-between items-center">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <h3 className="text-sm font-semibold text-gray-900">Resultados del Análisis</h3>
-                    <button
-                      onClick={() => setResult(null)}
-                      className="px-3 py-1 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors text-xs"
-                    >
-                      Analizar otro archivo
-                    </button>
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                      {/* Botones de descarga */}
+                      {displayResult?.action === 'transcribir' && displayResult?.data?.transcription && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => downloadTranscription('pdf')}
+                            className="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-xs flex items-center gap-1"
+                            title="Descargar PDF"
+                          >
+                            📄 PDF
+                          </button>
+                          <button
+                            onClick={() => downloadTranscription('txt')}
+                            className="px-3 py-1 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-xs flex items-center gap-1"
+                            title="Descargar TXT"
+                          >
+                            📝 TXT
+                          </button>
+                          <button
+                            onClick={() => downloadTranscription('srt')}
+                            className="px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-xs flex items-center gap-1"
+                            title="Descargar SRT (Subtítulos)"
+                          >
+                            🎬 SRT
+                          </button>
+                        </div>
+                      )}
+                      <button
+                        onClick={() => setResult(null)}
+                        className="px-3 py-1 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors text-xs"
+                      >
+                        Analizar otro archivo
+                      </button>
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2 space-y-6">
