@@ -21,8 +21,14 @@ export default function FunctionalDashboard() {
   const [summaryType, setSummaryType] = useState<'short' | 'detailed'>('detailed');
   const [targetLanguage, setTargetLanguage] = useState('en');
 
-  // Demo mode - skip authentication (default to true for now)
-  const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE !== 'false';
+  // Demo mode - ALWAYS enabled for now
+  const isDemoMode = true;
+
+  // Debug logging
+  console.log('FunctionalDashboard - isDemoMode:', isDemoMode);
+  console.log('FunctionalDashboard - DEMO_MODE env:', process.env.NEXT_PUBLIC_DEMO_MODE);
+  console.log('FunctionalDashboard - user:', user);
+  console.log('FunctionalDashboard - loading:', loading);
 
   // Only require authentication if NOT in demo mode
   if (!isDemoMode) {

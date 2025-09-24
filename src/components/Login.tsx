@@ -17,6 +17,8 @@ export function Login() {
     const t = useTranslations('Login');
 
     const handleDemoAccess = () => {
+        console.log('Demo access button clicked!');
+        console.log('Redirecting to /es...');
         // Simply redirect to dashboard in demo mode
         window.location.href = '/es';
     };
