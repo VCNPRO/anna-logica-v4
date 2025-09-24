@@ -1,5 +1,16 @@
 import { NextResponse } from 'next/server';
 
+export async function OPTIONS(request: Request) {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
+}
+
 export async function POST(request: Request) {
   try {
     const { fileName, fileSize, fileType } = await request.json();
@@ -18,11 +29,18 @@ export async function POST(request: Request) {
     const uploadId = crypto.randomUUID();
     const uploadUrl = `/api/large-upload/${uploadId}`;
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       uploadId,
       uploadUrl,
       maxChunkSize: 5 * 1024 * 1024 // 5MB chunks
     });
+
+    // Add CORS headers
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+
+    return response;
 
   } catch (error) {
     console.error('Error generating upload URL:', error);

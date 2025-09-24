@@ -3,6 +3,17 @@ import fs from 'fs/promises';
 import path from 'path';
 import { createTempFilePathExact, ensureTempDir, getTempDir } from '@/lib/temp-utils';
 
+export async function OPTIONS(request: Request) {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
+}
+
 export async function POST(request: Request) {
   try {
     const { uploadId } = await request.json();
@@ -88,12 +99,19 @@ export async function POST(request: Request) {
 
     // console.log(`Upload ${uploadId} completed successfully: ${finalFilePath}`);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       uploadId,
       filePath: finalFilePath,
       message: 'Upload completed successfully'
     });
+
+    // Add CORS headers
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+
+    return response;
 
   } catch (error) {
     console.error('Error completing upload:', error);
