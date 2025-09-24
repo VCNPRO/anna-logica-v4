@@ -1,13 +1,15 @@
 {
-  "functions": {
-    "app/api/**/*.ts": {
-      "runtime": "@vercel/node"
-    }
-  },
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/app/api/$1"
+      "source": "/((?!api|_next|_vercel|favicon.ico).*)",
+      "destination": "/es/$1"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/es",
+      "permanent": false
     }
   ]
 }
