@@ -19,20 +19,20 @@ async function checkFFmpegAvailability(path: string): Promise<boolean> {
 async function getFFmpegPath(): Promise<string> {
   const possiblePaths = [];
 
-  // Production (Vercel, Netlify, etc.)
-  if (process.env.NODE_ENV === 'production') {
-    try {
-      // Try ffmpeg-static first
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const ffmpegStatic = require('ffmpeg-static');
-      if (typeof ffmpegStatic === 'string' && ffmpegStatic) {
-        possiblePaths.push(ffmpegStatic);
-      }
-    } catch {
-      // ffmpeg-static not available
+  // Try @ffmpeg-installer/ffmpeg first (works in serverless)
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const ffmpeg = require('@ffmpeg-installer/ffmpeg');
+    if (ffmpeg.path && typeof ffmpeg.path === 'string') {
+      possiblePaths.push(ffmpeg.path);
+      console.log(`🎯 Found @ffmpeg-installer path: ${ffmpeg.path}`);
     }
+  } catch (error) {
+    console.log('❌ @ffmpeg-installer not available:', error);
+  }
 
-    // Try common system paths in serverless environments
+  // Production (Vercel, Netlify, etc.) - Add system paths as fallback
+  if (process.env.NODE_ENV === 'production') {
     possiblePaths.push(
       'ffmpeg',
       '/usr/bin/ffmpeg',
