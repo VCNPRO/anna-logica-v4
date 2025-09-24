@@ -114,13 +114,21 @@ export default function FunctionalDashboard() {
       return;
     }
 
+    const file = selectedFiles[0]; // Process first file for now
+
+    // Check file size limit (4MB for Vercel)
+    const maxSizeBytes = 4 * 1024 * 1024; // 4MB
+    if (file.size > maxSizeBytes) {
+      setError(`Archivo demasiado grande. Máximo permitido: 4MB. Tu archivo: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+      return;
+    }
+
     setCurrentAction(action);
     setIsLoading(true);
     setError(null);
     setResult(null);
 
     try {
-      const file = selectedFiles[0]; // Process first file for now
       const formData = new FormData();
       formData.append('file', file);
       formData.append('language', currentLanguage);
@@ -293,7 +301,7 @@ export default function FunctionalDashboard() {
                 <span className="text-orange-500 text-sm">📁</span>
                 <h2 className="text-sm font-medium text-gray-900">Carga de Archivos</h2>
               </div>
-              <p className="text-xs text-gray-600 mb-3">Sube hasta 50 archivos de audio, video o texto.</p>
+              <p className="text-xs text-gray-600 mb-3">Sube archivos de audio, video o texto (máx. 4MB cada uno).</p>
 
               <div className="text-gray-400 mb-3">
                 <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -490,19 +498,31 @@ export default function FunctionalDashboard() {
 
                 {selectedFiles.length > 0 ? (
                   <div className="divide-y divide-gray-200">
-                    {selectedFiles.map((file, index) => (
-                      <div key={index} className="px-4 py-3 flex items-center gap-4">
-                        <input type="checkbox" className="rounded border-gray-300 scale-75" />
-                        <span className="flex-1 text-xs text-gray-900">{file.name}</span>
-                        <span className="text-xs text-gray-500 text-center" style={{minWidth: '80px'}}>Cargado</span>
-                        <button
-                          onClick={() => removeFile(index)}
-                          className="text-red-500 hover:text-red-700 text-xs"
-                        >
-                          Eliminar
-                        </button>
-                      </div>
-                    ))}
+                    {selectedFiles.map((file, index) => {
+                      const sizeInMB = (file.size / 1024 / 1024).toFixed(2);
+                      const isTooBig = file.size > 4 * 1024 * 1024;
+
+                      return (
+                        <div key={index} className="px-4 py-3 flex items-center gap-4">
+                          <input type="checkbox" className="rounded border-gray-300 scale-75" />
+                          <div className="flex-1">
+                            <span className="text-xs text-gray-900 block">{file.name}</span>
+                            <span className={`text-xs ${isTooBig ? 'text-red-500' : 'text-gray-500'}`}>
+                              {sizeInMB}MB {isTooBig && '(Demasiado grande)'}
+                            </span>
+                          </div>
+                          <span className="text-xs text-gray-500 text-center" style={{minWidth: '80px'}}>
+                            {isTooBig ? 'Error' : 'Cargado'}
+                          </span>
+                          <button
+                            onClick={() => removeFile(index)}
+                            className="text-red-500 hover:text-red-700 text-xs"
+                          >
+                            Eliminar
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="px-4 py-8 text-center">
