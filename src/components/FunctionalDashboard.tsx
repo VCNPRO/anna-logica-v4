@@ -117,7 +117,7 @@ export default function FunctionalDashboard() {
     }
 
     const file = selectedFiles[0]; // Process first file for now
-    const maxSizeBytes = 4 * 1024 * 1024; // 4MB threshold for chunked upload
+    const maxSizeBytes = 3 * 1024 * 1024; // 3MB threshold for chunked upload (compatible con límites Vercel)
 
     // console.log(`Processing file: ${file.name}, size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
 
@@ -550,7 +550,7 @@ export default function FunctionalDashboard() {
                   <div className="divide-y divide-gray-200">
                     {selectedFiles.map((file, index) => {
                       const sizeInMB = (file.size / 1024 / 1024).toFixed(2);
-                      const isLarge = file.size > 4 * 1024 * 1024;
+                      const isLarge = file.size > 3 * 1024 * 1024;
 
                       return (
                         <div key={index} className="px-4 py-3 flex items-center gap-4">

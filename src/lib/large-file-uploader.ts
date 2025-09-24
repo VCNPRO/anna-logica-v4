@@ -8,7 +8,7 @@ export interface UploadProgress {
 }
 
 export class LargeFileUploader {
-  private chunkSize = 5 * 1024 * 1024; // 5MB
+  private chunkSize = 3 * 1024 * 1024; // 3MB (seguro bajo el límite de Vercel, considerando overhead de FormData)
   private onProgress?: (progress: UploadProgress) => void;
 
   constructor(onProgress?: (progress: UploadProgress) => void) {

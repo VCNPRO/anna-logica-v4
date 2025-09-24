@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     const response = NextResponse.json({
       uploadId,
       uploadUrl,
-      maxChunkSize: 5 * 1024 * 1024 // 5MB chunks
+      maxChunkSize: 3 * 1024 * 1024 // 3MB chunks (seguro bajo límite Vercel con overhead FormData)
     });
 
     // Add CORS headers
