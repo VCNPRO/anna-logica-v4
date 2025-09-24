@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { genAI } from '@/lib/gemini';
 import fs from 'fs/promises';
 import { createTempFilePath, ensureTempDir, cleanupTempFile } from '@/lib/temp-utils';
-import { segmentMediaFile, cleanupSegments, formatTimestamp, convertToCompressedMp3, type MediaSegment } from '@/lib/media-segmentation-wasm';
+import { segmentMediaFile, cleanupSegments, formatTimestamp, convertToCompressedMp3, type MediaSegment } from '@/lib/media-segmentation';
 
 export async function POST(request: Request) {
   let tempFilePath: string | null = null;

@@ -7,10 +7,16 @@ const execFileAsync = promisify(execFile);
 
 // Detect FFmpeg path based on environment
 function getFFmpegPath(): string {
-  // Production (Vercel, Netlify, etc.) - Use system ffmpeg directly
+  // Production (Vercel, Netlify, etc.) - Use ffmpeg-static
   if (process.env.NODE_ENV === 'production') {
-    console.log('🎥 Using production system FFmpeg: ffmpeg');
-    return 'ffmpeg';
+    try {
+      const ffmpegStatic = require('ffmpeg-static');
+      console.log('🎥 Using ffmpeg-static for production:', ffmpegStatic);
+      return ffmpegStatic;
+    } catch (error) {
+      console.log('🎥 Fallback to system FFmpeg: ffmpeg');
+      return 'ffmpeg';
+    }
   }
 
   // Development (Windows local)
