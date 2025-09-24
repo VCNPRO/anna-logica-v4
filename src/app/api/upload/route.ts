@@ -4,6 +4,7 @@ import fs from 'fs/promises';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { genAI } from '@/lib/gemini';
+import { createTempFilePath, ensureTempDir, cleanupTempFile } from '@/lib/temp-utils';
 
 const execFileAsync = promisify(execFile);
 const ffmpegPath = "C:\\ffmpeg\\bin\\ffmpeg.exe";
@@ -82,10 +83,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No file provided.' }, { status: 400 });
     }
 
-    const uploadDir = path.join(process.cwd(), 'tmp', 'uploads');
-    await fs.mkdir(uploadDir, { recursive: true });
-
-    originalFilePath = path.join(uploadDir, file.name);
+    await ensureTempDir('uploads');
+    originalFilePath = createTempFilePath(file.name, 'uploads');
     const buffer = Buffer.from(await file.arrayBuffer());
     await fs.writeFile(originalFilePath, buffer);
     console.log(`File saved to: ${originalFilePath}`);
@@ -107,7 +106,7 @@ export async function POST(request: Request) {
     if (isVideo || (isAudio && !isMp3)) {
         const parsedPath = path.parse(originalFilePath);
         const mp3FileName = `${parsedPath.name}.mp3`;
-        const mp3FilePath = path.join(uploadDir, mp3FileName);
+        const mp3FilePath = createTempFilePath(mp3FileName, 'uploads');
 
         await convertToMp3(originalFilePath, mp3FilePath);
         

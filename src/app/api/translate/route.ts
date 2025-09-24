@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { genAI } from '@/lib/gemini';
-import path from 'path';
 import fs from 'fs/promises';
+import { createTempFilePath, ensureTempDir, cleanupTempFile } from '@/lib/temp-utils';
 
 export async function POST(request: Request) {
   let tempFilePath: string | null = null;
@@ -17,10 +17,8 @@ export async function POST(request: Request) {
     }
 
     // Save file temporarily
-    const uploadDir = path.join(process.cwd(), 'tmp', 'translate');
-    await fs.mkdir(uploadDir, { recursive: true });
-
-    tempFilePath = path.join(uploadDir, `${Date.now()}_${file.name}`);
+    await ensureTempDir('translate');
+    tempFilePath = createTempFilePath(file.name, 'translate');
     const buffer = Buffer.from(await file.arrayBuffer());
     await fs.writeFile(tempFilePath, buffer);
 

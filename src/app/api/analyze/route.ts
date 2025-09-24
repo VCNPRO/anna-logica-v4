@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { genAI } from '@/lib/gemini';
-import path from 'path';
 import fs from 'fs/promises';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
+import { createTempFilePath, ensureTempDir, cleanupTempFile } from '@/lib/temp-utils';
 
 const execFileAsync = promisify(execFile);
 const mediaInfoPath = "C:\\MediaInfo_CLI_25.07_Windows_x64\\mediainfo.exe";
@@ -22,10 +22,8 @@ export async function POST(request: Request) {
     }
 
     // Save file temporarily
-    const uploadDir = path.join(process.cwd(), 'tmp', 'analyze');
-    await fs.mkdir(uploadDir, { recursive: true });
-
-    tempFilePath = path.join(uploadDir, `${Date.now()}_${file.name}`);
+    await ensureTempDir('analyze');
+    tempFilePath = createTempFilePath(file.name, 'analyze');
     const buffer = Buffer.from(await file.arrayBuffer());
     await fs.writeFile(tempFilePath, buffer);
 
@@ -106,7 +104,7 @@ export async function POST(request: Request) {
     const aiAnalysis = JSON.parse(jsonString);
 
     // Clean up temp file
-    await fs.unlink(tempFilePath);
+    await cleanupTempFile(tempFilePath);
 
     return NextResponse.json({
       success: true,
@@ -127,9 +125,7 @@ export async function POST(request: Request) {
 
     // Clean up temp file if it exists
     if (tempFilePath) {
-      try {
-        await fs.unlink(tempFilePath);
-      } catch {}
+      await cleanupTempFile(tempFilePath);
     }
 
     const errorMessage = error instanceof Error ? error.message : 'Error analyzing file.';
