@@ -120,11 +120,10 @@ export async function getMediaDuration(filePath: string): Promise<number> {
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('❌ Error getting media duration:', errorMessage);
-    console.error('FFmpeg path used:', ffmpegPath);
     console.error('File path:', filePath);
 
     if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
-      throw new Error(`FFmpeg not found at: ${ffmpegPath}. Please install FFmpeg.`);
+      throw new Error(`FFmpeg not found. Please install FFmpeg.`);
     }
 
     throw new Error(`Failed to get media duration: ${errorMessage}`);
@@ -270,12 +269,11 @@ export async function convertToCompressedMp3(
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('❌ MP3 conversion failed:', errorMessage);
-    console.error('FFmpeg path:', ffmpegPath);
     console.error('Input file:', inputPath);
     console.error('Output file:', outputPath);
 
     if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
-      throw new Error(`FFmpeg not found at: ${ffmpegPath}. Please install FFmpeg.`);
+      throw new Error(`FFmpeg not found. Please install FFmpeg.`);
     }
 
     throw new Error(`Failed to convert to MP3: ${errorMessage}`);
