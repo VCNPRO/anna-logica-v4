@@ -7,18 +7,10 @@ const execFileAsync = promisify(execFile);
 
 // Detect FFmpeg path based on environment
 function getFFmpegPath(): string {
-  // Production (Vercel, Netlify, etc.)
+  // Production (Vercel, Netlify, etc.) - Use system ffmpeg directly
   if (process.env.NODE_ENV === 'production') {
-    try {
-      // Try to use the installed ffmpeg binary
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const ffmpegInstaller = require('@ffmpeg-installer/ffmpeg');
-      console.log('🎥 Using production FFmpeg:', ffmpegInstaller.path);
-      return ffmpegInstaller.path;
-    } catch {
-      console.warn('⚠️ @ffmpeg-installer/ffmpeg not found, trying system ffmpeg');
-      return 'ffmpeg'; // Fallback to system binary
-    }
+    console.log('🎥 Using production system FFmpeg: ffmpeg');
+    return 'ffmpeg';
   }
 
   // Development (Windows local)
