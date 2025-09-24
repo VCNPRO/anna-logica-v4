@@ -36,14 +36,14 @@ export async function POST(request: Request) {
     try {
       const { stdout: mediaInfoOutput } = await execFileAsync(mediaInfoPath, ['--Output=JSON', tempFilePath]);
       mediaInfo = JSON.parse(mediaInfoOutput);
-    } catch (error) {
+    } catch {
       console.log('MediaInfo analysis failed, continuing without it');
     }
 
     try {
       const { stdout: mediaConchOutput } = await execFileAsync(mediaConchPath, ['-f', tempFilePath]);
       mediaConchReport = mediaConchOutput;
-    } catch (error) {
+    } catch {
       console.log('MediaConch analysis failed, continuing without it');
     }
 

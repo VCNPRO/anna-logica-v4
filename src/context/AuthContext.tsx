@@ -17,15 +17,21 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
   useEffect(() => {
+    if (isDemoMode || !auth) {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [isDemoMode]);
 
   return (
     <AuthContext.Provider value={{ user, loading }}>

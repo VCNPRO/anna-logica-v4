@@ -7,7 +7,7 @@ import {
     signInWithEmailAndPassword 
 } from 'firebase/auth';
 import { useTranslations } from 'next-intl'; // Used for translations
-import { Button } from '@/components/ui/button'; 
+// import { Button } from '@/components/ui/button'; // Removed unused import 
 
 export function Login() {
     const [email, setEmail] = useState('');
@@ -20,6 +20,10 @@ export function Login() {
         setIsLoading(true);
         setError(null);
         try {
+            if (!auth) {
+                setError('Authentication service not available');
+                return;
+            }
             if (action === 'register') {
                 await createUserWithEmailAndPassword(auth, email, password);
             } else {

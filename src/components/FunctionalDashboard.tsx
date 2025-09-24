@@ -1,78 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+// import { useTranslations } from 'next-intl'; // TODO: Implement translations
 import { useAuth } from '@/context/AuthContext';
 import { Login } from '@/components/Login';
-import { TranscriptionView, SummaryView, TagsView, MetadataView } from '@/components/results';
+import { TranscriptionView, SummaryView, TagsView } from '@/components/results';
 
-// Types for API responses
-interface TranscriptionResult {
-  success: boolean;
-  transcription: string;
-  language: string;
-  fileName: string;
-}
-
-interface SpeakerResult {
-  success: boolean;
-  speakers: Array<{
-    id: string;
-    name: string;
-    segments: Array<{
-      start: string;
-      end: string;
-      text: string;
-    }>;
-  }>;
-  totalSpeakers: number;
-  summary: string;
-  fileName: string;
-}
-
-interface SummaryResult {
-  success: boolean;
-  summary: string;
-  tags: string[];
-  mainTopics: string[];
-  duration: string;
-  language: string;
-  sentiment: string;
-  confidence: number;
-  fileName: string;
-}
-
-interface TranslationResult {
-  success: boolean;
-  originalText: string;
-  translatedText: string;
-  sourceLanguage: string;
-  targetLanguage: string;
-  confidence: number;
-  summary: string;
-  fileName: string;
-}
-
-interface AnalysisResult {
-  success: boolean;
-  fileName: string;
-  fileSize: number;
-  fileType: string;
-  aiAnalysis: {
-    contentAnalysis: unknown;
-    technicalAnalysis: unknown;
-    contentSummary: unknown;
-    recommendations: string[];
-    suitability: unknown;
-  };
-  technicalData: {
-    mediaInfo: unknown;
-    mediaConchReport: string;
-  };
-}
+// Note: Type interfaces removed as they were unused in current implementation
 
 export default function FunctionalDashboard() {
-  const t = useTranslations('DashboardPage');
+  // const t = useTranslations('DashboardPage'); // TODO: Implement translations
   const { user, loading } = useAuth();
   const [result, setResult] = useState<unknown>(null);
   const [isLoading, setIsLoading] = useState(false);
