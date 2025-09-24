@@ -3,7 +3,7 @@ import jsPDF from 'jspdf';
 
 export async function POST(request: Request) {
   try {
-    const { transcription, fileName, format, language } = await request.json();
+    const { transcription, fileName, format } = await request.json();
 
     if (!transcription || !format) {
       return NextResponse.json({ error: 'Missing transcription or format' }, { status: 400 });

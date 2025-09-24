@@ -10,10 +10,12 @@ function getFFmpegPath(): string {
   // Production (Vercel, Netlify, etc.) - Use ffmpeg-static
   if (process.env.NODE_ENV === 'production') {
     try {
+      // Dynamic import for ffmpeg-static in production
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const ffmpegStatic = require('ffmpeg-static');
       console.log('🎥 Using ffmpeg-static for production:', ffmpegStatic);
       return ffmpegStatic;
-    } catch (error) {
+    } catch {
       console.log('🎥 Fallback to system FFmpeg: ffmpeg');
       return 'ffmpeg';
     }
