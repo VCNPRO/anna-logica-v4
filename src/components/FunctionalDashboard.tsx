@@ -71,7 +71,12 @@ export default function FunctionalDashboard() {
 
   // Función para descargar transcripción en diferentes formatos
   const downloadTranscription = async (format: 'pdf' | 'txt' | 'srt') => {
-    if (!displayResult?.data?.transcription || !displayResult?.fileName) {
+    // Check if we have transcription data in the expected structure
+    const resultData = displayResult as unknown as { data?: { transcription?: string }, aiAnalysis?: { transcription?: string }, fileName?: string };
+    const transcription = resultData?.data?.transcription || resultData?.aiAnalysis?.transcription;
+    const fileName = resultData?.fileName || 'transcription';
+
+    if (!transcription) {
       console.error('No transcription data available');
       return;
     }
@@ -83,8 +88,8 @@ export default function FunctionalDashboard() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          transcription: displayResult.data.transcription,
-          fileName: displayResult.fileName,
+          transcription: transcription,
+          fileName: fileName,
           format: format,
           language: 'es'
         }),
@@ -101,7 +106,7 @@ export default function FunctionalDashboard() {
       a.href = url;
 
       // Extraer nombre base del archivo
-      const baseName = displayResult.fileName.replace(/\.[^/.]+$/, '');
+      const baseName = fileName.replace(/\.[^/.]+$/, '');
       a.download = `${baseName}.${format}`;
 
       document.body.appendChild(a);
@@ -564,7 +569,15 @@ export default function FunctionalDashboard() {
                     <h3 className="text-sm font-semibold text-gray-900">Resultados del Análisis</h3>
                     <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                       {/* Botones de descarga */}
-                      {displayResult?.action === 'transcribir' && displayResult?.data?.transcription && (
+                      {(() => {
+                        const resultData = displayResult as unknown as {
+                          action?: string,
+                          data?: { transcription?: string },
+                          aiAnalysis?: { transcription?: string }
+                        };
+                        return resultData?.action === 'transcribir' &&
+                               (resultData?.data?.transcription || resultData?.aiAnalysis?.transcription);
+                      })() && (
                         <div className="flex gap-2">
                           <button
                             onClick={() => downloadTranscription('pdf')}

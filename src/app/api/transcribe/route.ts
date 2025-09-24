@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { genAI } from '@/lib/gemini';
 import fs from 'fs/promises';
 import { createTempFilePath, ensureTempDir, cleanupTempFile } from '@/lib/temp-utils';
-import { segmentMediaFile, cleanupSegments, formatTimestamp, convertToCompressedMp3, estimateCompressedSize, type MediaSegment } from '@/lib/media-segmentation';
+import { segmentMediaFile, cleanupSegments, formatTimestamp, convertToCompressedMp3, type MediaSegment } from '@/lib/media-segmentation';
 
 export async function POST(request: Request) {
   let tempFilePath: string | null = null;
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
       if (!header.startsWith('494433') && !header.includes('fff')) { // ID3 or sync frame
         console.warn('⚠️ Warning: File may not be a valid MP3');
       }
-    } catch (error) {
+    } catch {
       throw new Error('Compressed file appears to be corrupted');
     }
 
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
     const processingFilePath = compressedFilePath;
 
     // Helper function to call Gemini API with fallback and retry logic
-    async function callGeminiWithFallback(prompt: string, filePart: any): Promise<string> {
+    async function callGeminiWithFallback(prompt: string, filePart: { inlineData: { data: string; mimeType: string } }): Promise<string> {
       const models = [
         { name: "gemini-1.5-flash", label: "Flash" },
         { name: "gemini-1.5-pro", label: "Pro" }
@@ -105,7 +105,7 @@ export async function POST(request: Request) {
             // Check if base64 is valid
             try {
               atob(base64Data.substring(0, 100)); // Test a small portion
-            } catch (e) {
+            } catch {
               throw new Error('Invalid base64 encoding');
             }
 
@@ -124,12 +124,13 @@ export async function POST(request: Request) {
 
             console.log(`✅ Success with ${modelInfo.label} on attempt ${attempt + 1}`);
             return transcription;
-          } catch (error: any) {
-            const isOverloaded = error.message?.includes('503') || error.message?.includes('overloaded');
+          } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : '';
+            const isOverloaded = errorMessage.includes('503') || errorMessage.includes('overloaded');
             const isLastAttempt = attempt === 2;
             const isLastModel = modelInfo === models[models.length - 1];
 
-            console.log(`❌ ${modelInfo.label} attempt ${attempt + 1} failed:`, error.message);
+            console.log(`❌ ${modelInfo.label} attempt ${attempt + 1} failed:`, errorMessage);
 
             if (isOverloaded && !isLastModel) {
               console.log(`🔄 ${modelInfo.label} is overloaded, switching to next model...`);
@@ -166,8 +167,7 @@ export async function POST(request: Request) {
       Si hay múltiples personas hablando, indica cada cambio de speaker con "Speaker 1:", "Speaker 2:", etc.
     `;
 
-    // Get MIME type from file or form data
-    const mimeType = file?.type || formData.get('mimeType') as string || 'audio/mpeg';
+    // MIME type is always MP3 after compression, so we don't need the original MIME type
 
     // Check compressed file size to determine if segmentation is needed (Gemini limit ~20MB)
     const fileStats = await fs.stat(processingFilePath);

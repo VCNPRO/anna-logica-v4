@@ -1,6 +1,5 @@
 import { execFile } from 'child_process';
 import { promisify } from 'util';
-import path from 'path';
 import fs from 'fs/promises';
 import { createTempFilePath, ensureTempDir, cleanupTempFile } from './temp-utils';
 
@@ -12,10 +11,11 @@ function getFFmpegPath(): string {
   if (process.env.NODE_ENV === 'production') {
     try {
       // Try to use the installed ffmpeg binary
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const ffmpegInstaller = require('@ffmpeg-installer/ffmpeg');
       console.log('🎥 Using production FFmpeg:', ffmpegInstaller.path);
       return ffmpegInstaller.path;
-    } catch (error) {
+    } catch {
       console.warn('⚠️ @ffmpeg-installer/ffmpeg not found, trying system ffmpeg');
       return 'ffmpeg'; // Fallback to system binary
     }
@@ -80,16 +80,17 @@ export async function getMediaDuration(filePath: string): Promise<number> {
     console.log(`📊 Media duration: ${totalSeconds}s (${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toFixed(2).padStart(5, '0')})`);
 
     return totalSeconds;
-  } catch (error: any) {
-    console.error('❌ Error getting media duration:', error.message);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('❌ Error getting media duration:', errorMessage);
     console.error('FFmpeg path used:', ffmpegPath);
     console.error('File path:', filePath);
 
-    if (error.code === 'ENOENT') {
+    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
       throw new Error(`FFmpeg not found at: ${ffmpegPath}. Please install FFmpeg.`);
     }
 
-    throw new Error(`Failed to get media duration: ${error.message}`);
+    throw new Error(`Failed to get media duration: ${errorMessage}`);
   }
 }
 
@@ -197,7 +198,7 @@ export async function convertToCompressedMp3(
     console.log(`📁 Output: ${outputPath}`);
     console.log(`🎛️ Bitrate: ${bitrate}kbps`);
 
-    const { stdout, stderr } = await execFileAsync(ffmpegPath, [
+    const { stderr } = await execFileAsync(ffmpegPath, [
       '-i', inputPath,
       '-acodec', 'mp3',
       '-ab', `${bitrate}k`,
@@ -227,17 +228,18 @@ export async function convertToCompressedMp3(
     console.log(`📊 Original: ${inputPath}`);
     console.log(`📊 Compressed: ${outputPath} (${(stats.size / (1024 * 1024)).toFixed(2)}MB)`);
 
-  } catch (error: any) {
-    console.error('❌ MP3 conversion failed:', error.message);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('❌ MP3 conversion failed:', errorMessage);
     console.error('FFmpeg path:', ffmpegPath);
     console.error('Input file:', inputPath);
     console.error('Output file:', outputPath);
 
-    if (error.code === 'ENOENT') {
+    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
       throw new Error(`FFmpeg not found at: ${ffmpegPath}. Please install FFmpeg.`);
     }
 
-    throw new Error(`Failed to convert to MP3: ${error.message}`);
+    throw new Error(`Failed to convert to MP3: ${errorMessage}`);
   }
 }
 

@@ -40,7 +40,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Unsupported format' }, { status: 400 });
     }
 
-    const response = new NextResponse(fileContent, {
+    const response = new NextResponse(fileContent as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': contentType,
@@ -142,7 +142,7 @@ function addSecondsToSRTTime(srtTime: string, seconds: number): string {
 /**
  * Generate PDF with professional formatting
  */
-async function generatePDF(transcription: string, fileName: string, language: string = 'es'): Promise<Uint8Array> {
+async function generatePDF(transcription: string, fileName: string, _language: string = 'es'): Promise<Uint8Array> {
   const doc = new jsPDF();
 
   // PDF metadata
@@ -195,5 +195,5 @@ async function generatePDF(transcription: string, fileName: string, language: st
   doc.text(`Página ${finalPageCount}`, 170, pageHeight - 20);
   doc.text('Generado con Scriptorium AI - anna-logica.com', 20, pageHeight - 10);
 
-  return doc.output('arraybuffer') as Uint8Array;
+  return new Uint8Array(doc.output('arraybuffer') as ArrayBuffer);
 }
