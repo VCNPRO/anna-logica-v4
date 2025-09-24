@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
       case 'pdf':
         // PDF with professional formatting
-        fileContent = await generatePDF(transcription, baseFileName, language);
+        fileContent = await generatePDF(transcription, baseFileName);
         contentType = 'application/pdf';
         downloadFileName = `${baseFileName}.pdf`;
         break;
@@ -142,7 +142,7 @@ function addSecondsToSRTTime(srtTime: string, seconds: number): string {
 /**
  * Generate PDF with professional formatting
  */
-async function generatePDF(transcription: string, fileName: string, _language: string = 'es'): Promise<Uint8Array> {
+async function generatePDF(transcription: string, fileName: string): Promise<Uint8Array> {
   const doc = new jsPDF();
 
   // PDF metadata

@@ -113,7 +113,7 @@ export async function convertToCompressedMp3(
     ]);
 
     // Read output file
-    const outputData = ffmpeg.readFile('output.mp3');
+    const outputData = await ffmpeg.readFile('output.mp3');
 
     // Write to disk
     await fs.writeFile(outputPath, outputData as Uint8Array);
@@ -199,7 +199,7 @@ export async function segmentMediaFile(
       ]);
 
       // Read segment data and write to disk
-      const segmentData = ffmpeg.readFile(`output_${i}.mp3`);
+      const segmentData = await ffmpeg.readFile(`output_${i}.mp3`);
       await fs.writeFile(segmentPath, segmentData as Uint8Array);
 
       // Clean up WASM file
