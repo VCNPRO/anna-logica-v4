@@ -17,7 +17,7 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+  const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE !== 'false';
 
   useEffect(() => {
     if (isDemoMode || !auth) {

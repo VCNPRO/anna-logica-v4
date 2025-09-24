@@ -3,8 +3,8 @@ import { initializeApp, getApps, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
 
-// Check if we're in demo mode or build time
-const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+// Check if we're in demo mode or build time (default to demo mode)
+const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE !== 'false';
 const isBuildTime = typeof window === 'undefined';
 
 // Firebase configuration using environment variables
