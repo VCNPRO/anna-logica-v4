@@ -1,0 +1,6 @@
+# Force complete rebuild
+# Timestamp: 2025-09-25T15:11:30.000Z
+cdk/
+lambda/
+*.log
+.env.local
