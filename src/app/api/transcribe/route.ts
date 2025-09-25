@@ -170,4 +170,4 @@ export async function GET() {
       timestamp: new Date().toISOString()
     }, { status: 500 });
   }
-}// FINAL DEPLOY - FFmpeg dependency REMOVED - Thu, Sep 25, 2025  4:11:30 PM
+}// FORCE VERCEL SYNC - FFmpeg ELIMINATED - Thu, Sep 25, 2025  4:13:00 PM
