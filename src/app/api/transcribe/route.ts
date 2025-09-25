@@ -72,14 +72,14 @@ export async function POST(request: Request) {
           }
         };
 
-        return transcriptionResult;
+        return NextResponse.json(transcriptionResult);
       }
 
       const result = await transcribeResponse.json();
 
       console.log('✅ AWS Lambda transcription completed');
 
-      return {
+      return NextResponse.json({
         success: true,
         transcription: result.transcription,
         language: result.language || language,
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
           performance: 'Optimized',
           reliability: 'Enterprise Grade'
         }
-      };
+      });
 
     } catch (error) {
       console.error('🚨 Production transcription error:', error);
@@ -121,25 +121,9 @@ export async function POST(request: Request) {
         }
       };
 
-      return transcriptionResult;
+      return NextResponse.json(transcriptionResult);
     }
 
-    console.log('✅ Enterprise transcription completed');
-
-    return NextResponse.json({
-      success: true,
-      transcription: transcriptionResult.transcription,
-      language: transcriptionResult.language || language,
-      segmented: transcriptionResult.segmented || false,
-      totalSegments: transcriptionResult.totalSegments,
-      provider: 'AWS Lambda Enterprise + Gemini AI',
-      version: 'enterprise',
-      processingInfo: {
-        filePath,
-        originalSize: file?.size,
-        timestamp: new Date().toISOString()
-      }
-    });
 
   } catch (error) {
     console.error('❌ Transcription error:', error);
