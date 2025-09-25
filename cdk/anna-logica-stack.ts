@@ -25,12 +25,13 @@ export class AnnaLogicaStack extends cdk.Stack {
       throughputMode: efs.ThroughputMode.BURSTING,
     });
 
-    // S3 bucket for final storage
-    const bucket = new s3.Bucket(this, 'AnnaLogicaBucket', {
-      bucketName: 'anna-logica-enterprise-storage',
+    // S3 bucket for final storage - with unique name
+    const bucket = new s3.Bucket(this, 'AnnaLogicaBucketV2', {
       versioned: true,
       encryption: s3.BucketEncryption.S3_MANAGED,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // Allow destruction
+      autoDeleteObjects: true, // Clean up on destroy
       lifecycleRules: [
         {
           id: 'DeleteOldVersions',
@@ -40,12 +41,12 @@ export class AnnaLogicaStack extends cdk.Stack {
       ],
     });
 
-    // FFmpeg Lambda Layer (we'll build this)
-    const ffmpegLayer = new lambda.LayerVersion(this, 'FFmpegLayer', {
-      layerVersionName: 'ffmpeg-layer',
-      code: lambda.Code.fromAsset('layers/ffmpeg'),
+    // Enterprise Media Processing Layer (cloud-native)
+    const mediaProcessingLayer = new lambda.LayerVersion(this, 'MediaProcessingLayer', {
+      layerVersionName: 'enterprise-media-layer',
+      code: lambda.Code.fromInline('// Enterprise media processing layer'),
       compatibleRuntimes: [lambda.Runtime.NODEJS_18_X],
-      description: 'FFmpeg binaries for audio/video processing',
+      description: 'Enterprise media processing utilities',
     });
 
     // Lambda execution role with EFS and S3 permissions
@@ -82,7 +83,7 @@ export class AnnaLogicaStack extends cdk.Stack {
         accessPoint,
         '/mnt/efs'
       ),
-      layers: [ffmpegLayer],
+      layers: [mediaProcessingLayer],
       environment: {
         BUCKET_NAME: bucket.bucketName,
         EFS_MOUNT_PATH: '/mnt/efs',

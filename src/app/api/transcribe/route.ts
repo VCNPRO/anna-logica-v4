@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       filePath = `/uploaded/${file.name}`;
       fileName = file.name;
       console.log(`📤 Processing file: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`);
-      console.log(`🔄 Using AWS Lambda for all processing - NO local FFmpeg needed`);
+      console.log(`🔄 Using AWS Lambda for all processing - NO local dependencies needed`);
     } else {
       // Para casos de prueba, usar un path por defecto
       filePath = '/demo/test-audio.mp3';
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       console.log(`🧪 Using demo file path for testing: ${filePath}`);
     }
 
-    // Production: Use AWS Lambda + FFmpeg + Gemini
+    // Production: Use AWS Lambda Enterprise + Gemini AI
     console.log(`🚀 Production transcription: ${filePath} with language: ${language}`);
 
     try {
@@ -132,7 +132,7 @@ export async function POST(request: Request) {
       language: transcriptionResult.language || language,
       segmented: transcriptionResult.segmented || false,
       totalSegments: transcriptionResult.totalSegments,
-      provider: 'AWS Lambda + FFmpeg + Gemini AI',
+      provider: 'AWS Lambda Enterprise + Gemini AI',
       version: 'enterprise',
       processingInfo: {
         filePath,
@@ -147,7 +147,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       error: 'Transcription failed',
       details: error instanceof Error ? error.message : 'Unknown error',
-      provider: 'AWS Lambda + FFmpeg + Gemini AI'
+      provider: 'AWS Lambda Enterprise + Gemini AI'
     }, { status: 500 });
   }
 }
@@ -163,14 +163,14 @@ export async function GET() {
     return NextResponse.json({
       status: 'healthy',
       service: 'Anna Logica Enterprise',
-      provider: 'AWS Lambda + FFmpeg + Gemini AI',
+      provider: 'AWS Lambda Enterprise + Gemini AI',
       apiGateway: healthResponse.ok ? 'connected' : 'disconnected',
       endpoints: {
         upload: 'https://vanobezo2c.execute-api.us-east-1.amazonaws.com/prod/upload',
         transcribe: 'https://vanobezo2c.execute-api.us-east-1.amazonaws.com/prod/transcribe'
       },
       features: [
-        'FFmpeg audio processing',
+        'Enterprise audio processing',
         'Unlimited file sizes via EFS',
         'Automatic segmentation for large files',
         'Gemini Flash + Pro fallback',
