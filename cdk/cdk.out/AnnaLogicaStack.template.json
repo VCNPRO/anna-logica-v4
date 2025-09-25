@@ -1,0 +1,1592 @@
+{
+ "Resources": {
+  "AnnaLogicaVPCB1B0A8B0": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AnnaLogicaStack/AnnaLogicaVPC"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/Resource"
+   }
+  },
+  "AnnaLogicaVPCPublicSubnet1SubnetA1F168D7": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1a",
+    "CidrBlock": "10.0.0.0/18",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "AnnaLogicaVPCB1B0A8B0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet1/Subnet"
+   }
+  },
+  "AnnaLogicaVPCPublicSubnet1RouteTable38586DF3": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "AnnaLogicaVPCB1B0A8B0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet1/RouteTable"
+   }
+  },
+  "AnnaLogicaVPCPublicSubnet1RouteTableAssociationAB2F871E": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "AnnaLogicaVPCPublicSubnet1RouteTable38586DF3"
+    },
+    "SubnetId": {
+     "Ref": "AnnaLogicaVPCPublicSubnet1SubnetA1F168D7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet1/RouteTableAssociation"
+   }
+  },
+  "AnnaLogicaVPCPublicSubnet1DefaultRoute6BFAD112": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "AnnaLogicaVPCIGW772B6486"
+    },
+    "RouteTableId": {
+     "Ref": "AnnaLogicaVPCPublicSubnet1RouteTable38586DF3"
+    }
+   },
+   "DependsOn": [
+    "AnnaLogicaVPCVPCGW7AC397D0"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet1/DefaultRoute"
+   }
+  },
+  "AnnaLogicaVPCPublicSubnet1EIP904FED23": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet1/EIP"
+   }
+  },
+  "AnnaLogicaVPCPublicSubnet1NATGateway30EFD5B1": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "AnnaLogicaVPCPublicSubnet1EIP904FED23",
+      "AllocationId"
+     ]
+    },
+    "SubnetId": {
+     "Ref": "AnnaLogicaVPCPublicSubnet1SubnetA1F168D7"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet1"
+     }
+    ]
+   },
+   "DependsOn": [
+    "AnnaLogicaVPCPublicSubnet1DefaultRoute6BFAD112",
+    "AnnaLogicaVPCPublicSubnet1RouteTableAssociationAB2F871E"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet1/NATGateway"
+   }
+  },
+  "AnnaLogicaVPCPublicSubnet2Subnet2F08E572": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1b",
+    "CidrBlock": "10.0.64.0/18",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "AnnaLogicaVPCB1B0A8B0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet2/Subnet"
+   }
+  },
+  "AnnaLogicaVPCPublicSubnet2RouteTable3B40E64E": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "AnnaLogicaVPCB1B0A8B0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet2/RouteTable"
+   }
+  },
+  "AnnaLogicaVPCPublicSubnet2RouteTableAssociation44F10A98": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "AnnaLogicaVPCPublicSubnet2RouteTable3B40E64E"
+    },
+    "SubnetId": {
+     "Ref": "AnnaLogicaVPCPublicSubnet2Subnet2F08E572"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet2/RouteTableAssociation"
+   }
+  },
+  "AnnaLogicaVPCPublicSubnet2DefaultRouteD5401D0C": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "AnnaLogicaVPCIGW772B6486"
+    },
+    "RouteTableId": {
+     "Ref": "AnnaLogicaVPCPublicSubnet2RouteTable3B40E64E"
+    }
+   },
+   "DependsOn": [
+    "AnnaLogicaVPCVPCGW7AC397D0"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PublicSubnet2/DefaultRoute"
+   }
+  },
+  "AnnaLogicaVPCPrivateSubnet1Subnet81A12B2B": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1a",
+    "CidrBlock": "10.0.128.0/18",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "AnnaLogicaStack/AnnaLogicaVPC/PrivateSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "AnnaLogicaVPCB1B0A8B0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PrivateSubnet1/Subnet"
+   }
+  },
+  "AnnaLogicaVPCPrivateSubnet1RouteTable5D40B276": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AnnaLogicaStack/AnnaLogicaVPC/PrivateSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "AnnaLogicaVPCB1B0A8B0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PrivateSubnet1/RouteTable"
+   }
+  },
+  "AnnaLogicaVPCPrivateSubnet1RouteTableAssociationE35589C4": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "AnnaLogicaVPCPrivateSubnet1RouteTable5D40B276"
+    },
+    "SubnetId": {
+     "Ref": "AnnaLogicaVPCPrivateSubnet1Subnet81A12B2B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PrivateSubnet1/RouteTableAssociation"
+   }
+  },
+  "AnnaLogicaVPCPrivateSubnet1DefaultRoute336FC6C0": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "AnnaLogicaVPCPublicSubnet1NATGateway30EFD5B1"
+    },
+    "RouteTableId": {
+     "Ref": "AnnaLogicaVPCPrivateSubnet1RouteTable5D40B276"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PrivateSubnet1/DefaultRoute"
+   }
+  },
+  "AnnaLogicaVPCPrivateSubnet2Subnet793F1BBC": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1b",
+    "CidrBlock": "10.0.192.0/18",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "AnnaLogicaStack/AnnaLogicaVPC/PrivateSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "AnnaLogicaVPCB1B0A8B0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PrivateSubnet2/Subnet"
+   }
+  },
+  "AnnaLogicaVPCPrivateSubnet2RouteTable10960DC8": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AnnaLogicaStack/AnnaLogicaVPC/PrivateSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "AnnaLogicaVPCB1B0A8B0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PrivateSubnet2/RouteTable"
+   }
+  },
+  "AnnaLogicaVPCPrivateSubnet2RouteTableAssociationBBC3A011": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "AnnaLogicaVPCPrivateSubnet2RouteTable10960DC8"
+    },
+    "SubnetId": {
+     "Ref": "AnnaLogicaVPCPrivateSubnet2Subnet793F1BBC"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PrivateSubnet2/RouteTableAssociation"
+   }
+  },
+  "AnnaLogicaVPCPrivateSubnet2DefaultRouteB974FE06": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "AnnaLogicaVPCPublicSubnet1NATGateway30EFD5B1"
+    },
+    "RouteTableId": {
+     "Ref": "AnnaLogicaVPCPrivateSubnet2RouteTable10960DC8"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/PrivateSubnet2/DefaultRoute"
+   }
+  },
+  "AnnaLogicaVPCIGW772B6486": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AnnaLogicaStack/AnnaLogicaVPC"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/IGW"
+   }
+  },
+  "AnnaLogicaVPCVPCGW7AC397D0": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "AnnaLogicaVPCIGW772B6486"
+    },
+    "VpcId": {
+     "Ref": "AnnaLogicaVPCB1B0A8B0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaVPC/VPCGW"
+   }
+  },
+  "AnnaLogicaEFS30B22B9B": {
+   "Type": "AWS::EFS::FileSystem",
+   "Properties": {
+    "Encrypted": true,
+    "FileSystemPolicy": {
+     "Statement": [
+      {
+       "Action": [
+        "elasticfilesystem:ClientWrite",
+        "elasticfilesystem:ClientRootAccess"
+       ],
+       "Condition": {
+        "Bool": {
+         "elasticfilesystem:AccessedViaMountTarget": "true"
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": "*"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "FileSystemTags": [
+     {
+      "Key": "Name",
+      "Value": "AnnaLogicaStack/AnnaLogicaEFS"
+     }
+    ],
+    "LifecyclePolicies": [
+     {
+      "TransitionToIA": "AFTER_30_DAYS"
+     }
+    ],
+    "PerformanceMode": "generalPurpose",
+    "ThroughputMode": "bursting"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaEFS/Resource"
+   }
+  },
+  "AnnaLogicaEFSEfsSecurityGroup9A3A0A20": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "AnnaLogicaStack/AnnaLogicaEFS/EfsSecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AnnaLogicaStack/AnnaLogicaEFS"
+     }
+    ],
+    "VpcId": {
+     "Ref": "AnnaLogicaVPCB1B0A8B0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaEFS/EfsSecurityGroup/Resource"
+   }
+  },
+  "AnnaLogicaEFSEfsSecurityGroupfromAnnaLogicaStackAnnaLogicaTranscribeLambdaSecurityGroupC99146AA20498A9EE721": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "from AnnaLogicaStackAnnaLogicaTranscribeLambdaSecurityGroupC99146AA:2049",
+    "FromPort": 2049,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "AnnaLogicaEFSEfsSecurityGroup9A3A0A20",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "AnnaLogicaTranscribeLambdaSecurityGroup1E144FD1",
+      "GroupId"
+     ]
+    },
+    "ToPort": 2049
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaEFS/EfsSecurityGroup/from AnnaLogicaStackAnnaLogicaTranscribeLambdaSecurityGroupC99146AA:2049"
+   }
+  },
+  "AnnaLogicaEFSEfsSecurityGroupfromAnnaLogicaStackAnnaLogicaUploadLambdaSecurityGroup2BD2D9512049EC3E34C3": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "from AnnaLogicaStackAnnaLogicaUploadLambdaSecurityGroup2BD2D951:2049",
+    "FromPort": 2049,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "AnnaLogicaEFSEfsSecurityGroup9A3A0A20",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "AnnaLogicaUploadLambdaSecurityGroup10874C88",
+      "GroupId"
+     ]
+    },
+    "ToPort": 2049
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaEFS/EfsSecurityGroup/from AnnaLogicaStackAnnaLogicaUploadLambdaSecurityGroup2BD2D951:2049"
+   }
+  },
+  "AnnaLogicaEFSEfsMountTarget1590644E3": {
+   "Type": "AWS::EFS::MountTarget",
+   "Properties": {
+    "FileSystemId": {
+     "Ref": "AnnaLogicaEFS30B22B9B"
+    },
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "AnnaLogicaEFSEfsSecurityGroup9A3A0A20",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": {
+     "Ref": "AnnaLogicaVPCPrivateSubnet1Subnet81A12B2B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaEFS/EfsMountTarget1"
+   }
+  },
+  "AnnaLogicaEFSEfsMountTarget26156CC30": {
+   "Type": "AWS::EFS::MountTarget",
+   "Properties": {
+    "FileSystemId": {
+     "Ref": "AnnaLogicaEFS30B22B9B"
+    },
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "AnnaLogicaEFSEfsSecurityGroup9A3A0A20",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": {
+     "Ref": "AnnaLogicaVPCPrivateSubnet2Subnet793F1BBC"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaEFS/EfsMountTarget2"
+   }
+  },
+  "AnnaLogicaBucketC1174DAE": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    },
+    "BucketName": "anna-logica-enterprise-storage",
+    "LifecycleConfiguration": {
+     "Rules": [
+      {
+       "ExpirationInDays": 365,
+       "Id": "DeleteOldVersions",
+       "NoncurrentVersionExpiration": {
+        "NoncurrentDays": 30
+       },
+       "Status": "Enabled"
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "VersioningConfiguration": {
+     "Status": "Enabled"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaBucket/Resource"
+   }
+  },
+  "FFmpegLayer65FCD2A8": {
+   "Type": "AWS::Lambda::LayerVersion",
+   "Properties": {
+    "CompatibleRuntimes": [
+     "nodejs18.x"
+    ],
+    "Content": {
+     "S3Bucket": "cdk-hnb659fds-assets-587736032304-us-east-1",
+     "S3Key": "3b12220c18d88e7bc1c5e9ea6535cb4c0aa5607b4a3ffc3136aac69c4766ec9f.zip"
+    },
+    "Description": "FFmpeg binaries for audio/video processing",
+    "LayerName": "ffmpeg-layer"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/FFmpegLayer/Resource",
+    "aws:asset:path": "asset.3b12220c18d88e7bc1c5e9ea6535cb4c0aa5607b4a3ffc3136aac69c4766ec9f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Content"
+   }
+  },
+  "LambdaExecutionRoleD5C26073": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/LambdaExecutionRole/Resource"
+   }
+  },
+  "LambdaExecutionRoleDefaultPolicy6D69732F": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "AnnaLogicaBucketC1174DAE",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "AnnaLogicaBucketC1174DAE",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "elasticfilesystem:ClientMount",
+        "elasticfilesystem:ClientWrite",
+        "elasticfilesystem:ClientRootAccess"
+       ],
+       "Condition": {
+        "Bool": {
+         "elasticfilesystem:AccessedViaMountTarget": "true"
+        }
+       },
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "AnnaLogicaEFS30B22B9B",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "elasticfilesystem:ClientMount",
+       "Condition": {
+        "StringEquals": {
+         "elasticfilesystem:AccessPointArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":elasticfilesystem:us-east-1:587736032304:access-point/",
+            {
+             "Ref": "AnnaLogicaAccessPointC921AE73"
+            }
+           ]
+          ]
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": "elasticfilesystem:ClientWrite",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":elasticfilesystem:us-east-1:587736032304:file-system/",
+          {
+           "Ref": "AnnaLogicaEFS30B22B9B"
+          }
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaExecutionRoleDefaultPolicy6D69732F",
+    "Roles": [
+     {
+      "Ref": "LambdaExecutionRoleD5C26073"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/LambdaExecutionRole/DefaultPolicy/Resource"
+   }
+  },
+  "AnnaLogicaAccessPointC921AE73": {
+   "Type": "AWS::EFS::AccessPoint",
+   "Properties": {
+    "AccessPointTags": [
+     {
+      "Key": "Name",
+      "Value": "AnnaLogicaStack/AnnaLogicaAccessPoint"
+     }
+    ],
+    "FileSystemId": {
+     "Ref": "AnnaLogicaEFS30B22B9B"
+    },
+    "RootDirectory": {
+     "Path": "/mnt/scriptorium"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAccessPoint/Resource"
+   }
+  },
+  "AnnaLogicaTranscribeLambdaSecurityGroup1E144FD1": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Automatic security group for Lambda Function AnnaLogicaStackAnnaLogicaTranscribeLambda810F9A15",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "AnnaLogicaVPCB1B0A8B0"
+    }
+   },
+   "DependsOn": [
+    "AnnaLogicaEFSEfsMountTarget1590644E3",
+    "AnnaLogicaEFSEfsMountTarget26156CC30",
+    "AnnaLogicaVPCPrivateSubnet1DefaultRoute336FC6C0",
+    "AnnaLogicaVPCPrivateSubnet1RouteTableAssociationE35589C4",
+    "AnnaLogicaVPCPrivateSubnet2DefaultRouteB974FE06",
+    "AnnaLogicaVPCPrivateSubnet2RouteTableAssociationBBC3A011"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaTranscribeLambda/SecurityGroup/Resource"
+   }
+  },
+  "AnnaLogicaTranscribeLambdaCE7D4013": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-587736032304-us-east-1",
+     "S3Key": "5089bec529dd313354cd0004963a345c5cb0c0973e76bc8d9145f2a978a6a53b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "BUCKET_NAME": {
+       "Ref": "AnnaLogicaBucketC1174DAE"
+      },
+      "EFS_MOUNT_PATH": "/mnt/efs",
+      "GEMINI_API_KEY": "",
+      "NODE_ENV": "production"
+     }
+    },
+    "FileSystemConfigs": [
+     {
+      "Arn": {
+       "Fn::Join": [
+        "",
+        [
+         "arn:",
+         {
+          "Ref": "AWS::Partition"
+         },
+         ":elasticfilesystem:us-east-1:587736032304:access-point/",
+         {
+          "Ref": "AnnaLogicaAccessPointC921AE73"
+         }
+        ]
+       ]
+      },
+      "LocalMountPath": "/mnt/efs"
+     }
+    ],
+    "Handler": "index.handler",
+    "Layers": [
+     {
+      "Ref": "FFmpegLayer65FCD2A8"
+     }
+    ],
+    "MemorySize": 3008,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaExecutionRoleD5C26073",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs18.x",
+    "Timeout": 900,
+    "VpcConfig": {
+     "SecurityGroupIds": [
+      {
+       "Fn::GetAtt": [
+        "AnnaLogicaTranscribeLambdaSecurityGroup1E144FD1",
+        "GroupId"
+       ]
+      }
+     ],
+     "SubnetIds": [
+      {
+       "Ref": "AnnaLogicaVPCPrivateSubnet1Subnet81A12B2B"
+      },
+      {
+       "Ref": "AnnaLogicaVPCPrivateSubnet2Subnet793F1BBC"
+      }
+     ]
+    }
+   },
+   "DependsOn": [
+    "AnnaLogicaEFSEfsMountTarget1590644E3",
+    "AnnaLogicaEFSEfsMountTarget26156CC30",
+    "AnnaLogicaEFSEfsSecurityGroupfromAnnaLogicaStackAnnaLogicaTranscribeLambdaSecurityGroupC99146AA20498A9EE721",
+    "AnnaLogicaVPCPrivateSubnet1DefaultRoute336FC6C0",
+    "AnnaLogicaVPCPrivateSubnet1RouteTableAssociationE35589C4",
+    "AnnaLogicaVPCPrivateSubnet2DefaultRouteB974FE06",
+    "AnnaLogicaVPCPrivateSubnet2RouteTableAssociationBBC3A011",
+    "LambdaExecutionRoleDefaultPolicy6D69732F",
+    "LambdaExecutionRoleD5C26073"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaTranscribeLambda/Resource",
+    "aws:asset:path": "asset.5089bec529dd313354cd0004963a345c5cb0c0973e76bc8d9145f2a978a6a53b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "AnnaLogicaUploadLambdaSecurityGroup10874C88": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Automatic security group for Lambda Function AnnaLogicaStackAnnaLogicaUploadLambdaF3E42B22",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "AnnaLogicaVPCB1B0A8B0"
+    }
+   },
+   "DependsOn": [
+    "AnnaLogicaEFSEfsMountTarget1590644E3",
+    "AnnaLogicaEFSEfsMountTarget26156CC30",
+    "AnnaLogicaVPCPrivateSubnet1DefaultRoute336FC6C0",
+    "AnnaLogicaVPCPrivateSubnet1RouteTableAssociationE35589C4",
+    "AnnaLogicaVPCPrivateSubnet2DefaultRouteB974FE06",
+    "AnnaLogicaVPCPrivateSubnet2RouteTableAssociationBBC3A011"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaUploadLambda/SecurityGroup/Resource"
+   }
+  },
+  "AnnaLogicaUploadLambda1D1B7888": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-587736032304-us-east-1",
+     "S3Key": "e4aca23960cef2d372d8b80f7a052e627575b2bddec89496338baa25dbf94f87.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "BUCKET_NAME": {
+       "Ref": "AnnaLogicaBucketC1174DAE"
+      },
+      "EFS_MOUNT_PATH": "/mnt/efs"
+     }
+    },
+    "FileSystemConfigs": [
+     {
+      "Arn": {
+       "Fn::Join": [
+        "",
+        [
+         "arn:",
+         {
+          "Ref": "AWS::Partition"
+         },
+         ":elasticfilesystem:us-east-1:587736032304:access-point/",
+         {
+          "Ref": "AnnaLogicaAccessPointC921AE73"
+         }
+        ]
+       ]
+      },
+      "LocalMountPath": "/mnt/efs"
+     }
+    ],
+    "Handler": "index.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaExecutionRoleD5C26073",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs18.x",
+    "Timeout": 300,
+    "VpcConfig": {
+     "SecurityGroupIds": [
+      {
+       "Fn::GetAtt": [
+        "AnnaLogicaUploadLambdaSecurityGroup10874C88",
+        "GroupId"
+       ]
+      }
+     ],
+     "SubnetIds": [
+      {
+       "Ref": "AnnaLogicaVPCPrivateSubnet1Subnet81A12B2B"
+      },
+      {
+       "Ref": "AnnaLogicaVPCPrivateSubnet2Subnet793F1BBC"
+      }
+     ]
+    }
+   },
+   "DependsOn": [
+    "AnnaLogicaEFSEfsMountTarget1590644E3",
+    "AnnaLogicaEFSEfsMountTarget26156CC30",
+    "AnnaLogicaEFSEfsSecurityGroupfromAnnaLogicaStackAnnaLogicaTranscribeLambdaSecurityGroupC99146AA20498A9EE721",
+    "AnnaLogicaEFSEfsSecurityGroupfromAnnaLogicaStackAnnaLogicaUploadLambdaSecurityGroup2BD2D9512049EC3E34C3",
+    "AnnaLogicaVPCPrivateSubnet1DefaultRoute336FC6C0",
+    "AnnaLogicaVPCPrivateSubnet1RouteTableAssociationE35589C4",
+    "AnnaLogicaVPCPrivateSubnet2DefaultRouteB974FE06",
+    "AnnaLogicaVPCPrivateSubnet2RouteTableAssociationBBC3A011",
+    "LambdaExecutionRoleDefaultPolicy6D69732F",
+    "LambdaExecutionRoleD5C26073"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaUploadLambda/Resource",
+    "aws:asset:path": "asset.e4aca23960cef2d372d8b80f7a052e627575b2bddec89496338baa25dbf94f87",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "AnnaLogicaAPIF1A98B33": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "BinaryMediaTypes": [
+     "*/*"
+    ],
+    "Description": "Enterprise-grade AI transcription and analysis service",
+    "Name": "Anna Logica Enterprise API"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/Resource"
+   }
+  },
+  "AnnaLogicaAPICloudWatchRole5AFCA780": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/CloudWatchRole/Resource"
+   }
+  },
+  "AnnaLogicaAPIAccount3B219462": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "AnnaLogicaAPICloudWatchRole5AFCA780",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "AnnaLogicaAPIF1A98B33"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/Account"
+   }
+  },
+  "AnnaLogicaAPIDeployment773472097bbacce2e51d6d2fcf46a8155445bb40": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Enterprise-grade AI transcription and analysis service",
+    "RestApiId": {
+     "Ref": "AnnaLogicaAPIF1A98B33"
+    }
+   },
+   "DependsOn": [
+    "AnnaLogicaAPItranscribePOSTA48815C4",
+    "AnnaLogicaAPItranscribeF20DD38F",
+    "AnnaLogicaAPIuploadchunkPOSTDA28D7BD",
+    "AnnaLogicaAPIuploadchunk223EE18F",
+    "AnnaLogicaAPIuploadPOST6B24F3F2",
+    "AnnaLogicaAPIuploadC943D3C1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "AnnaLogicaAPIDeploymentStageprodC7FAF145": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "AnnaLogicaAPIDeployment773472097bbacce2e51d6d2fcf46a8155445bb40"
+    },
+    "RestApiId": {
+     "Ref": "AnnaLogicaAPIF1A98B33"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "AnnaLogicaAPIAccount3B219462"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/DeploymentStage.prod/Resource"
+   }
+  },
+  "AnnaLogicaAPItranscribeF20DD38F": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "AnnaLogicaAPIF1A98B33",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "transcribe",
+    "RestApiId": {
+     "Ref": "AnnaLogicaAPIF1A98B33"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/Default/transcribe/Resource"
+   }
+  },
+  "AnnaLogicaAPItranscribePOSTApiPermissionAnnaLogicaStackAnnaLogicaAPI6DAEA86FPOSTtranscribe0BF0E39A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AnnaLogicaTranscribeLambdaCE7D4013",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:587736032304:",
+       {
+        "Ref": "AnnaLogicaAPIF1A98B33"
+       },
+       "/",
+       {
+        "Ref": "AnnaLogicaAPIDeploymentStageprodC7FAF145"
+       },
+       "/POST/transcribe"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/Default/transcribe/POST/ApiPermission.AnnaLogicaStackAnnaLogicaAPI6DAEA86F.POST..transcribe"
+   }
+  },
+  "AnnaLogicaAPItranscribePOSTApiPermissionTestAnnaLogicaStackAnnaLogicaAPI6DAEA86FPOSTtranscribe0AF8FEA0": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AnnaLogicaTranscribeLambdaCE7D4013",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:587736032304:",
+       {
+        "Ref": "AnnaLogicaAPIF1A98B33"
+       },
+       "/test-invoke-stage/POST/transcribe"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/Default/transcribe/POST/ApiPermission.Test.AnnaLogicaStackAnnaLogicaAPI6DAEA86F.POST..transcribe"
+   }
+  },
+  "AnnaLogicaAPItranscribePOSTA48815C4": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "AnnaLogicaTranscribeLambdaCE7D4013",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "RequestParameters": {
+     "method.request.header.Content-Type": true
+    },
+    "ResourceId": {
+     "Ref": "AnnaLogicaAPItranscribeF20DD38F"
+    },
+    "RestApiId": {
+     "Ref": "AnnaLogicaAPIF1A98B33"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/Default/transcribe/POST/Resource"
+   }
+  },
+  "AnnaLogicaAPIuploadC943D3C1": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "AnnaLogicaAPIF1A98B33",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "upload",
+    "RestApiId": {
+     "Ref": "AnnaLogicaAPIF1A98B33"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/Default/upload/Resource"
+   }
+  },
+  "AnnaLogicaAPIuploadPOSTApiPermissionAnnaLogicaStackAnnaLogicaAPI6DAEA86FPOSTupload630DAE57": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AnnaLogicaUploadLambda1D1B7888",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:587736032304:",
+       {
+        "Ref": "AnnaLogicaAPIF1A98B33"
+       },
+       "/",
+       {
+        "Ref": "AnnaLogicaAPIDeploymentStageprodC7FAF145"
+       },
+       "/POST/upload"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/Default/upload/POST/ApiPermission.AnnaLogicaStackAnnaLogicaAPI6DAEA86F.POST..upload"
+   }
+  },
+  "AnnaLogicaAPIuploadPOSTApiPermissionTestAnnaLogicaStackAnnaLogicaAPI6DAEA86FPOSTuploadA6291044": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AnnaLogicaUploadLambda1D1B7888",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:587736032304:",
+       {
+        "Ref": "AnnaLogicaAPIF1A98B33"
+       },
+       "/test-invoke-stage/POST/upload"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/Default/upload/POST/ApiPermission.Test.AnnaLogicaStackAnnaLogicaAPI6DAEA86F.POST..upload"
+   }
+  },
+  "AnnaLogicaAPIuploadPOST6B24F3F2": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "AnnaLogicaUploadLambda1D1B7888",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "AnnaLogicaAPIuploadC943D3C1"
+    },
+    "RestApiId": {
+     "Ref": "AnnaLogicaAPIF1A98B33"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/Default/upload/POST/Resource"
+   }
+  },
+  "AnnaLogicaAPIuploadchunk223EE18F": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "AnnaLogicaAPIuploadC943D3C1"
+    },
+    "PathPart": "chunk",
+    "RestApiId": {
+     "Ref": "AnnaLogicaAPIF1A98B33"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/Default/upload/chunk/Resource"
+   }
+  },
+  "AnnaLogicaAPIuploadchunkPOSTApiPermissionAnnaLogicaStackAnnaLogicaAPI6DAEA86FPOSTuploadchunk95DCF260": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AnnaLogicaUploadLambda1D1B7888",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:587736032304:",
+       {
+        "Ref": "AnnaLogicaAPIF1A98B33"
+       },
+       "/",
+       {
+        "Ref": "AnnaLogicaAPIDeploymentStageprodC7FAF145"
+       },
+       "/POST/upload/chunk"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/Default/upload/chunk/POST/ApiPermission.AnnaLogicaStackAnnaLogicaAPI6DAEA86F.POST..upload.chunk"
+   }
+  },
+  "AnnaLogicaAPIuploadchunkPOSTApiPermissionTestAnnaLogicaStackAnnaLogicaAPI6DAEA86FPOSTuploadchunkFE49A57C": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AnnaLogicaUploadLambda1D1B7888",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:587736032304:",
+       {
+        "Ref": "AnnaLogicaAPIF1A98B33"
+       },
+       "/test-invoke-stage/POST/upload/chunk"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/Default/upload/chunk/POST/ApiPermission.Test.AnnaLogicaStackAnnaLogicaAPI6DAEA86F.POST..upload.chunk"
+   }
+  },
+  "AnnaLogicaAPIuploadchunkPOSTDA28D7BD": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "AnnaLogicaUploadLambda1D1B7888",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "AnnaLogicaAPIuploadchunk223EE18F"
+    },
+    "RestApiId": {
+     "Ref": "AnnaLogicaAPIF1A98B33"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/AnnaLogicaAPI/Default/upload/chunk/POST/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/31Ry07DMBD8Fu6ugSAhcQzloUo8ogT1ijbuNpgmduRdU0VR/h3ZLk174TQzq9F6dpzJ7PpWXl3AnhZqs1u0upZjxaB2Avb0OaLK5LjulVhuzbpYisLXrVaVrw1ymM2stJ7xA+oW5/k8y4ms0sDamqM5kMdVEeAN+BkY9zCIwukfYJwXrwyjM3g0pCQHlTOD+urQsKhQead5eHbW9zHDv4OVaRwSTQK3JMcn3WI1EGMXjOfq1XrDH+AaZJErhUSF1SZmO5GToBs53nu1S7EPLME9EE6iha7egBxfYEC3RkeHNs70kzfqr6ZTXqDrNAVLeOkTiJBJ5gGEhk6OpU3VRyxsq1XsKrFJQK+b1JkcSyTOex3dM82VCpeKB+xbO8ROl1tzoiqGJv1uJCWS9U5hOO4oDjsTf0X+spvYYWTTNPti8rBImyY43j33nidh7AblN13+ZJm8vpNXF9+k9cJ5w7pDWSb8BTo3ZxK3AgAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "AnnaLogicaAPIEndpointBA8ED104": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "AnnaLogicaAPIF1A98B33"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "AnnaLogicaAPIDeploymentStageprodC7FAF145"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "APIUrl": {
+   "Description": "Anna Logica API Gateway URL",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "AnnaLogicaAPIF1A98B33"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "AnnaLogicaAPIDeploymentStageprodC7FAF145"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "S3Bucket": {
+   "Description": "S3 Bucket for file storage",
+   "Value": {
+    "Ref": "AnnaLogicaBucketC1174DAE"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,66 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "3b12220c18d88e7bc1c5e9ea6535cb4c0aa5607b4a3ffc3136aac69c4766ec9f": {
+      "displayName": "FFmpegLayer/Code",
+      "source": {
+        "path": "asset.3b12220c18d88e7bc1c5e9ea6535cb4c0aa5607b4a3ffc3136aac69c4766ec9f",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "587736032304-us-east-1-908c4d4c": {
+          "bucketName": "cdk-hnb659fds-assets-587736032304-us-east-1",
+          "objectKey": "3b12220c18d88e7bc1c5e9ea6535cb4c0aa5607b4a3ffc3136aac69c4766ec9f.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::587736032304:role/cdk-hnb659fds-file-publishing-role-587736032304-us-east-1"
+        }
+      }
+    },
+    "5089bec529dd313354cd0004963a345c5cb0c0973e76bc8d9145f2a978a6a53b": {
+      "displayName": "AnnaLogicaTranscribeLambda/Code",
+      "source": {
+        "path": "asset.5089bec529dd313354cd0004963a345c5cb0c0973e76bc8d9145f2a978a6a53b",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "587736032304-us-east-1-528a47bd": {
+          "bucketName": "cdk-hnb659fds-assets-587736032304-us-east-1",
+          "objectKey": "5089bec529dd313354cd0004963a345c5cb0c0973e76bc8d9145f2a978a6a53b.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::587736032304:role/cdk-hnb659fds-file-publishing-role-587736032304-us-east-1"
+        }
+      }
+    },
+    "e4aca23960cef2d372d8b80f7a052e627575b2bddec89496338baa25dbf94f87": {
+      "displayName": "AnnaLogicaUploadLambda/Code",
+      "source": {
+        "path": "asset.e4aca23960cef2d372d8b80f7a052e627575b2bddec89496338baa25dbf94f87",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "587736032304-us-east-1-9e2e4dce": {
+          "bucketName": "cdk-hnb659fds-assets-587736032304-us-east-1",
+          "objectKey": "e4aca23960cef2d372d8b80f7a052e627575b2bddec89496338baa25dbf94f87.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::587736032304:role/cdk-hnb659fds-file-publishing-role-587736032304-us-east-1"
+        }
+      }
+    },
+    "d6dd7b6c9376eb25c8086208f44cd0200c0d0663d90c6b112fe5ba4dbf3f146f": {
+      "displayName": "AnnaLogicaStack Template",
+      "source": {
+        "path": "AnnaLogicaStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "587736032304-us-east-1-fb041a83": {
+          "bucketName": "cdk-hnb659fds-assets-587736032304-us-east-1",
+          "objectKey": "d6dd7b6c9376eb25c8086208f44cd0200c0d0663d90c6b112fe5ba4dbf3f146f.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::587736032304:role/cdk-hnb659fds-file-publishing-role-587736032304-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
