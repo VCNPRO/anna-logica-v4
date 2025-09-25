@@ -23,16 +23,22 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
 
-    // For now, we'll create a simple implementation
-    // In production, you'd generate signed URLs for AWS S3/Google Cloud
-
+    // Generate upload ID for chunked upload system
     const uploadId = crypto.randomUUID();
-    const uploadUrl = `/api/large-upload/${uploadId}`;
+
+    // Use existing endpoints for chunked upload
+    const uploadUrl = `/api/upload-chunk`; // Use existing upload-chunk endpoint
+    const completeUrl = `/api/complete-upload`; // Use existing complete-upload endpoint
 
     const response = NextResponse.json({
       uploadId,
       uploadUrl,
-      maxChunkSize: 3 * 1024 * 1024 // 3MB chunks (seguro bajo límite Vercel con overhead FormData)
+      completeUrl,
+      maxChunkSize: 3 * 1024 * 1024, // 3MB chunks (safe for Vercel limits)
+      chunkUploadMethod: 'POST',
+      fileName,
+      fileSize,
+      totalChunks: Math.ceil(fileSize / (3 * 1024 * 1024))
     });
 
     // Add CORS headers
