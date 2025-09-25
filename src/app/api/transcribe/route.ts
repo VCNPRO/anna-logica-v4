@@ -44,7 +44,7 @@ export async function POST(request: Request) {
 
     try {
       // Call AWS API Gateway transcribe endpoint directly
-      const awsApiUrl = process.env.NEXT_PUBLIC_AWS_API_GATEWAY_URL || 'https://5fg5a561vb.execute-api.us-east-1.amazonaws.com/prod';
+      const awsApiUrl = process.env.NEXT_PUBLIC_AWS_API_GATEWAY_URL || 'https://vanobezo2c.execute-api.us-east-1.amazonaws.com/prod';
 
       console.log(`🌐 Calling AWS Lambda: ${awsApiUrl}/transcribe`);
 
@@ -158,7 +158,7 @@ export async function POST(request: Request) {
 export async function GET() {
   try {
     // Test AWS connectivity
-    const healthResponse = await fetch('https://5fg5a561vb.execute-api.us-east-1.amazonaws.com/prod/transcribe', {
+    const healthResponse = await fetch('https://vanobezo2c.execute-api.us-east-1.amazonaws.com/prod/transcribe', {
       method: 'GET'
     });
 
@@ -168,8 +168,8 @@ export async function GET() {
       provider: 'AWS Lambda + FFmpeg + Gemini AI',
       apiGateway: healthResponse.ok ? 'connected' : 'disconnected',
       endpoints: {
-        upload: 'https://5fg5a561vb.execute-api.us-east-1.amazonaws.com/prod/upload',
-        transcribe: 'https://5fg5a561vb.execute-api.us-east-1.amazonaws.com/prod/transcribe'
+        upload: 'https://vanobezo2c.execute-api.us-east-1.amazonaws.com/prod/upload',
+        transcribe: 'https://vanobezo2c.execute-api.us-east-1.amazonaws.com/prod/transcribe'
       },
       features: [
         'FFmpeg audio processing',
