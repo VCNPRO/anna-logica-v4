@@ -31,7 +31,7 @@ export function FileUploader({ onUploadStart, onUploadSuccess, onUploadError, is
     formData.append('file', file);
 
     try {
-      const response = await fetch('/api/upload', {
+      const response = await fetch('/api/transcription', {
         method: 'POST',
         body: formData,
       });

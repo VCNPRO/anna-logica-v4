@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Source map support for better error traces
 import * as cdk from 'aws-cdk-lib';
-import { AnnaLogicaStack } from './anna-logica-stack.js';
+import { AnnaLogicaStack } from './anna-logica-stack.ts';
 
 const app = new cdk.App();
 new AnnaLogicaStack(app, 'AnnaLogicaStackV2', {

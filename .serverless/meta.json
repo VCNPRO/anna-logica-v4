@@ -1,0 +1,58 @@
+{
+  "C:\\Users\\La Bestia\\Desktop\\anna-logica-v4\\serverless.yml": {
+    "versionFramework": "4.19.1",
+    "servicePath": "C:\\Users\\La Bestia\\Desktop\\anna-logica-v4\\serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "anna-logica-new",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs18.x",
+        "region": "us-east-1",
+        "stage": "prod"
+      },
+      "functions": {
+        "transcribe": {
+          "handler": "lambda/transcribe/index.handler",
+          "timeout": 30,
+          "events": [
+            {
+              "http": {
+                "path": "transcribe",
+                "method": "get",
+                "cors": true
+              }
+            },
+            {
+              "http": {
+                "path": "transcribe",
+                "method": "post",
+                "cors": true
+              }
+            }
+          ]
+        }
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "nodejs18.x",
+      "region": "us-east-1",
+      "stage": "prod"
+    },
+    "error": {
+      "message": "You must sign in or use a license key with Serverless Framework V.4 and later versions. Please use \"serverless login\".",
+      "stack": "Error: You must sign in or use a license key with Serverless Framework V.4 and later versions. Please use \"serverless login\".\n    at Authentication.getAuthenticatedData (file:///C:/Users/La%20Bestia/.serverless/releases/4.19.1/package/dist/sf-core.js:708:10911)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Authentication.authenticate (file:///C:/Users/La%20Bestia/.serverless/releases/4.19.1/package/dist/sf-core.js:710:22266)\n    at async TraditionalRunner.resolveVariablesAndAuthenticate (file:///C:/Users/La%20Bestia/.serverless/releases/4.19.1/package/dist/sf-core.js:714:2379)\n    at async TraditionalRunner.run (file:///C:/Users/La%20Bestia/.serverless/releases/4.19.1/package/dist/sf-core.js:1333:27914)\n    at async route (file:///C:/Users/La%20Bestia/.serverless/releases/4.19.1/package/dist/sf-core.js:1508:2878)\n    at async Object.run (file:///C:/Users/La%20Bestia/.serverless/releases/4.19.1/package/dist/sf-core.js:1509:3661)\n    at async run2 (file:///C:/Users/La%20Bestia/.serverless/releases/4.19.1/package/dist/sf-core.js:1509:4815)"
+    },
+    "serviceRawFile": "service: anna-logica-new\n\nprovider:\n  name: aws\n  runtime: nodejs18.x\n  region: us-east-1\n  stage: prod\n\nfunctions:\n  transcribe:\n    handler: lambda/transcribe/index.handler\n    timeout: 30\n    events:\n      - http:\n          path: transcribe\n          method: get\n          cors: true\n      - http:\n          path: transcribe\n          method: post\n          cors: true",
+    "command": [
+      "deploy"
+    ],
+    "options": {},
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  }
+}

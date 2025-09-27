@@ -1,9 +1,14 @@
 {
   "name": "anna-logica-enterprise",
   "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
   "env": {
-    "GEMINI_API_KEY": "@gemini_api_key",
-    "NEXT_PUBLIC_AWS_API_GATEWAY_URL": "https://vanobezo2c.execute-api.us-east-1.amazonaws.com/prod"
+    "NEXT_PUBLIC_AWS_API_GATEWAY_URL": "https://8y4y77gkgl.execute-api.us-east-1.amazonaws.com/prod"
   },
   "headers": [
     {

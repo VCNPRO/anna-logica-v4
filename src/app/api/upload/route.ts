@@ -26,9 +26,9 @@ export async function POST(request: Request) {
 
     try {
       // Call AWS Lambda for upload processing
-      const awsApiUrl = process.env.NEXT_PUBLIC_AWS_API_GATEWAY_URL || 'https://vanobezo2c.execute-api.us-east-1.amazonaws.com/prod';
+      const awsApiUrl = process.env.NEXT_PUBLIC_AWS_API_GATEWAY_URL || 'https://8y4y77gkgl.execute-api.us-east-1.amazonaws.com/prod';
 
-      console.log(`🌐 Calling AWS Lambda for upload processing: ${awsApiUrl}/upload`);
+      console.log(`🌐 Calling AWS Lambda for upload processing: ${awsApiUrl}/transcribe`);
 
       const uploadFormData = new FormData();
       if (file) {
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
       uploadFormData.append('fileName', fileName);
       uploadFormData.append('fileType', fileType);
 
-      const uploadResponse = await fetch(`${awsApiUrl}/upload`, {
+      const uploadResponse = await fetch(`${awsApiUrl}/transcribe`, {
         method: 'POST',
         body: uploadFormData
       });
