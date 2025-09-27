@@ -1,0 +1,21 @@
+service: anna-logica-new
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: prod
+
+functions:
+  transcribe:
+    handler: lambda/transcribe/index.handler
+    timeout: 30
+    events:
+      - http:
+          path: transcribe
+          method: get
+          cors: true
+      - http:
+          path: transcribe
+          method: post
+          cors: true

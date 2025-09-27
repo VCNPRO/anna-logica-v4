@@ -1,0 +1,787 @@
+{
+ "Resources": {
+  "AudioBucket96BEECBA": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketName": "anna-logica-transcribe-audio",
+    "Tags": [
+     {
+      "Key": "aws-cdk:auto-delete-objects",
+      "Value": "true"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/AudioBucket/Resource"
+   }
+  },
+  "AudioBucketPolicy75597578": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "AudioBucket96BEECBA"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:DeleteObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:PutBucketPolicy"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::GetAtt": [
+          "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+          "Arn"
+         ]
+        }
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "AudioBucket96BEECBA",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "AudioBucket96BEECBA",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/AudioBucket/Policy/Resource"
+   }
+  },
+  "AudioBucketAutoDeleteObjectsCustomResource299426EB": {
+   "Type": "Custom::S3AutoDeleteObjects",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+      "Arn"
+     ]
+    },
+    "BucketName": {
+     "Ref": "AudioBucket96BEECBA"
+    }
+   },
+   "DependsOn": [
+    "AudioBucketPolicy75597578"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/AudioBucket/AutoDeleteObjectsCustomResource/Default"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ]
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-587736032304-us-east-1",
+     "S3Key": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip"
+    },
+    "Timeout": 900,
+    "MemorySize": 128,
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x",
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Lambda function for auto-deleting objects in ",
+       {
+        "Ref": "AudioBucket96BEECBA"
+       },
+       " S3 bucket."
+      ]
+     ]
+    }
+   },
+   "DependsOn": [
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler",
+    "aws:asset:path": "asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6",
+    "aws:asset:property": "Code"
+   }
+  },
+  "TranscribeFunctionServiceRole876D8932": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeFunction/ServiceRole/Resource"
+   }
+  },
+  "TranscribeFunctionServiceRoleDefaultPolicyE4D18A6C": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:Abort*",
+        "s3:DeleteObject*",
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "AudioBucket96BEECBA",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "AudioBucket96BEECBA",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "transcribe:DeleteTranscriptionJob",
+        "transcribe:GetTranscriptionJob",
+        "transcribe:ListTranscriptionJobs",
+        "transcribe:StartTranscriptionJob"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "TranscribeFunctionServiceRoleDefaultPolicyE4D18A6C",
+    "Roles": [
+     {
+      "Ref": "TranscribeFunctionServiceRole876D8932"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "TranscribeFunction36B32E11": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-587736032304-us-east-1",
+     "S3Key": "df2a4e4af94e9f2c9345b201e794ef47400911fb01fc5199ad2f1af9cd8391b6.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "S3_BUCKET": {
+       "Ref": "AudioBucket96BEECBA"
+      }
+     }
+    },
+    "Handler": "index.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "TranscribeFunctionServiceRole876D8932",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 900
+   },
+   "DependsOn": [
+    "TranscribeFunctionServiceRoleDefaultPolicyE4D18A6C",
+    "TranscribeFunctionServiceRole876D8932"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeFunction/Resource",
+    "aws:asset:path": "asset.df2a4e4af94e9f2c9345b201e794ef47400911fb01fc5199ad2f1af9cd8391b6",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "TranscribeAPIE32E47B0": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "Enterprise transcription with Node.js 20",
+    "Name": "Anna Logica Enterprise New"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeAPI/Resource"
+   }
+  },
+  "TranscribeAPICloudWatchRole8F194A43": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeAPI/CloudWatchRole/Resource"
+   }
+  },
+  "TranscribeAPIAccount30E3B304": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "TranscribeAPICloudWatchRole8F194A43",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "TranscribeAPIE32E47B0"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeAPI/Account"
+   }
+  },
+  "TranscribeAPIDeployment83333EA115a17af9c6dd018c55b98f1269f54487": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Enterprise transcription with Node.js 20",
+    "RestApiId": {
+     "Ref": "TranscribeAPIE32E47B0"
+    }
+   },
+   "DependsOn": [
+    "TranscribeAPIOPTIONS0FD17A20",
+    "TranscribeAPItranscribeGETF76CACD0",
+    "TranscribeAPItranscribeOPTIONS80D3B1B8",
+    "TranscribeAPItranscribePOST0C823930",
+    "TranscribeAPItranscribe0B6AF61C"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeAPI/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "TranscribeAPIDeploymentStageprod7CC2F1CC": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "TranscribeAPIDeployment83333EA115a17af9c6dd018c55b98f1269f54487"
+    },
+    "RestApiId": {
+     "Ref": "TranscribeAPIE32E47B0"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "TranscribeAPIAccount30E3B304"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeAPI/DeploymentStage.prod/Resource"
+   }
+  },
+  "TranscribeAPIOPTIONS0FD17A20": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "TranscribeAPIE32E47B0",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "TranscribeAPIE32E47B0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeAPI/Default/OPTIONS/Resource"
+   }
+  },
+  "TranscribeAPItranscribe0B6AF61C": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "TranscribeAPIE32E47B0",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "transcribe",
+    "RestApiId": {
+     "Ref": "TranscribeAPIE32E47B0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeAPI/Default/transcribe/Resource"
+   }
+  },
+  "TranscribeAPItranscribeOPTIONS80D3B1B8": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "TranscribeAPItranscribe0B6AF61C"
+    },
+    "RestApiId": {
+     "Ref": "TranscribeAPIE32E47B0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeAPI/Default/transcribe/OPTIONS/Resource"
+   }
+  },
+  "TranscribeAPItranscribeGETApiPermissionAnnaLogicaNewTranscribeAPIC6362125GETtranscribe271D2BF1": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "TranscribeFunction36B32E11",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:587736032304:",
+       {
+        "Ref": "TranscribeAPIE32E47B0"
+       },
+       "/",
+       {
+        "Ref": "TranscribeAPIDeploymentStageprod7CC2F1CC"
+       },
+       "/GET/transcribe"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeAPI/Default/transcribe/GET/ApiPermission.AnnaLogicaNewTranscribeAPIC6362125.GET..transcribe"
+   }
+  },
+  "TranscribeAPItranscribeGETApiPermissionTestAnnaLogicaNewTranscribeAPIC6362125GETtranscribe39E78A96": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "TranscribeFunction36B32E11",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:587736032304:",
+       {
+        "Ref": "TranscribeAPIE32E47B0"
+       },
+       "/test-invoke-stage/GET/transcribe"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeAPI/Default/transcribe/GET/ApiPermission.Test.AnnaLogicaNewTranscribeAPIC6362125.GET..transcribe"
+   }
+  },
+  "TranscribeAPItranscribeGETF76CACD0": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "TranscribeFunction36B32E11",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "TranscribeAPItranscribe0B6AF61C"
+    },
+    "RestApiId": {
+     "Ref": "TranscribeAPIE32E47B0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeAPI/Default/transcribe/GET/Resource"
+   }
+  },
+  "TranscribeAPItranscribePOSTApiPermissionAnnaLogicaNewTranscribeAPIC6362125POSTtranscribe2CA6B559": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "TranscribeFunction36B32E11",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:587736032304:",
+       {
+        "Ref": "TranscribeAPIE32E47B0"
+       },
+       "/",
+       {
+        "Ref": "TranscribeAPIDeploymentStageprod7CC2F1CC"
+       },
+       "/POST/transcribe"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeAPI/Default/transcribe/POST/ApiPermission.AnnaLogicaNewTranscribeAPIC6362125.POST..transcribe"
+   }
+  },
+  "TranscribeAPItranscribePOSTApiPermissionTestAnnaLogicaNewTranscribeAPIC6362125POSTtranscribeBA2E0236": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "TranscribeFunction36B32E11",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:587736032304:",
+       {
+        "Ref": "TranscribeAPIE32E47B0"
+       },
+       "/test-invoke-stage/POST/transcribe"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeAPI/Default/transcribe/POST/ApiPermission.Test.AnnaLogicaNewTranscribeAPIC6362125.POST..transcribe"
+   }
+  },
+  "TranscribeAPItranscribePOST0C823930": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "TranscribeFunction36B32E11",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "TranscribeAPItranscribe0B6AF61C"
+    },
+    "RestApiId": {
+     "Ref": "TranscribeAPIE32E47B0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/TranscribeAPI/Default/transcribe/POST/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/22PwW6DMBBEvyV3x02IVKlHkqq3qoh8QOSYLd2AbcSugxDyv1c2VKRVT/PGY+94M5ntn+Vuowba6qrZtniV05mVboQa6DLRQU5Hrxtgcfq0C81SuBb1uB4vfjZHRRBEq8y1UnJ681YzOhsvP3IBvUEidDYIVEZOpWshBknXgpmCoMNFEQGTzKMI1WGtGAY1yqkE4rzD9HrFXGvnLYtX6Fo3GrBpjwd3ZlWnyhlKIOd7DfH/4h34y1UxXOgnXUoShyBOntiZ/8I/UdG7O1bQp+lphdiKtv41+cNz5zkI6yqQN3q6Z5ncv8jd5kaI295bRgOynPUbr/45ZsEBAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "AnnaLogicaNew/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "TranscribeAPIEndpoint9E0E93A1": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "TranscribeAPIE32E47B0"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "TranscribeAPIDeploymentStageprod7CC2F1CC"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "ApiUrl": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "TranscribeAPIE32E47B0"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "TranscribeAPIDeploymentStageprod7CC2F1CC"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

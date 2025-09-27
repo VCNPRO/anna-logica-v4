@@ -41,13 +41,6 @@ export class AnnaLogicaStack extends cdk.Stack {
       ],
     });
 
-    // Enterprise Media Processing Layer (cloud-native)
-    const mediaProcessingLayer = new lambda.LayerVersion(this, 'MediaProcessingLayer', {
-      layerVersionName: 'enterprise-media-layer',
-      code: lambda.Code.fromInline('// Enterprise media processing layer'),
-      compatibleRuntimes: [lambda.Runtime.NODEJS_18_X],
-      description: 'Enterprise media processing utilities',
-    });
 
     // Lambda execution role with EFS and S3 permissions
     const lambdaRole = new iam.Role(this, 'LambdaExecutionRole', {
@@ -69,7 +62,7 @@ export class AnnaLogicaStack extends cdk.Stack {
 
     // Main transcription Lambda
     const transcribeLambda = new lambda.Function(this, 'AnnaLogicaTranscribeLambda', {
-      runtime: lambda.Runtime.NODEJS_18_X,
+      runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset('lambda/transcribe'),
       timeout: cdk.Duration.minutes(15),
@@ -83,18 +76,16 @@ export class AnnaLogicaStack extends cdk.Stack {
         accessPoint,
         '/mnt/efs'
       ),
-      layers: [mediaProcessingLayer],
       environment: {
         BUCKET_NAME: bucket.bucketName,
         EFS_MOUNT_PATH: '/mnt/efs',
-        GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
         NODE_ENV: 'production',
       },
     });
 
     // Upload Lambda for chunked uploads
     const uploadLambda = new lambda.Function(this, 'AnnaLogicaUploadLambda', {
-      runtime: lambda.Runtime.NODEJS_18_X,
+      runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset('lambda/upload'),
       timeout: cdk.Duration.minutes(5),
